@@ -1,0 +1,228 @@
+package br.com.adaptaconsultoria.amr.springmvc.controller;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import br.com.adaptaconsultoria.amr.manager.UsuarioManager;
+import br.com.adaptaconsultoria.amr.model.Cadastro;
+import br.com.adaptaconsultoria.amr.model.CadastroPendente;
+import br.com.adaptaconsultoria.amr.model.Chaveiro;
+import br.com.adaptaconsultoria.amr.model.Usuario;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.springmvc.util.MessageUtil;
+import br.com.adaptaconsultoria.amr.springmvc.util.SessionUtil;
+
+/**
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+@Controller
+@Scope("session")
+public class UsuarioController {
+
+	@RequestMapping(value = "/senhafinanceira", method = GET)
+	public ModelAndView senhafinanceira(HttpSession session) {
+		SessionUtil.setSubMenuAtivo(session, "senhafinanceira");
+		Chaveiro chaveiro = new Chaveiro();
+		chaveiro.setSenhaAtual("a");
+		ModelAndView model = new ModelAndView("senhafinanceira", "chaveiro", chaveiro);
+		return model;
+	}
+
+	@RequestMapping(value = "/senhafinanceira", method = POST)
+	public String senhafinanceira(@Valid final Chaveiro chaveiro, BindingResult result, RedirectAttributes redirectAttributes, HttpSession session,
+			HttpServletRequest request) {
+
+		try {
+
+			if (result.hasErrors()) {
+				return "senhafinanceira";
+			}
+
+			if (!chaveiro.novasSenhasIguais())
+				throw new Exception("Novas senhas não conferem!");
+
+			UsuarioManager manager = new UsuarioManager();
+			manager.alteraSenhaFinanceira(SessionUtil.getUsuarioId(session), chaveiro.getSenhaAtualFinanceira(), chaveiro.getSenhaNova());
+
+			MessageUtil.sucesso(redirectAttributes, "Parabéns!", "Sua senha financeira foi alterada com sucesso");
+
+			return "redirect:senhafinanceira";
+		} catch (Exception e) {
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+			return "redirect:senhafinanceira";
+		}
+	}
+
+	@RequestMapping(value = "/trocasenha", method = GET)
+	public ModelAndView trocaSenha(HttpSession session) {
+		SessionUtil.setSubMenuAtivo(session, "trocasenha");
+		ModelAndView model = new ModelAndView("trocasenha", "chaveiro", new Chaveiro());
+		return model;
+	}
+
+	@RequestMapping(value = "/trocasenha", method = POST)
+	public String trocaSenha(@Valid final Chaveiro chaveiro, BindingResult result, RedirectAttributes redirectAttributes, HttpSession session,
+			HttpServletRequest request) {
+
+		try {
+
+			if (result.hasErrors()) {
+				return "trocasenha";
+			}
+
+			if (!chaveiro.novasSenhasIguais())
+				throw new Exception("Novas senhas não conferem!");
+
+			UsuarioManager manager = new UsuarioManager();
+			manager.alteraSenha(SessionUtil.getUsuarioId(session), chaveiro.getSenhaAtual(), chaveiro.getSenhaNova());
+
+			MessageUtil.sucesso(redirectAttributes, "Parabéns!", "Sua senha foi alterada com sucesso");
+
+			return "redirect:trocasenha";
+		} catch (Exception e) {
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+			return "redirect:trocasenha";
+		}
+	}
+
+	@RequestMapping(value = "/cadastrospendentes", method = GET)
+	public ModelAndView cadastrosPendentes(HttpSession session) {
+		SessionUtil.setMenuAtivo(session, "cadastrospendentes");
+		SessionUtil.setSubMenuAtivo(session, "cadastrospendentes");
+		List<CadastroPendente> lista = new ArrayList<CadastroPendente>();
+		try {
+			lista = DaoFactory.getInstance().getCadastroPendenteDao().carregaPorUsuario(SessionUtil.getUsuarioId(session));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		ModelAndView model = new ModelAndView("cadastrospendentes", "lista", lista);
+		return model;
+	}
+
+	@RequestMapping(value = "/meucadastro", method = GET)
+	public ModelAndView meuCadastro(HttpSession session, RedirectAttributes redirectAttributes) {
+		SessionUtil.setSubMenuAtivo(session, "meucadastro");
+		UsuarioManager manager = new UsuarioManager();
+		Cadastro cadastro = null;
+		try {
+			Usuario usuario = DaoFactory.getInstance().getUsuarioDao().carregaPorId(SessionUtil.getUsuarioId(session));
+			cadastro = manager.criaCadastroDeParceiroDeNegocios(usuario.getParceiroNegocios().getId());
+		} catch (Exception e) {
+			cadastro = new Cadastro();
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+		}
+		return new ModelAndView("meucadastro", "cadastro", cadastro);
+	}
+
+	@RequestMapping(value = "/meucadastro", method = POST)
+	public String editaMeuCadastro(@Valid final Cadastro cadastro, BindingResult result, RedirectAttributes redirectAttributes, HttpSession session,
+			HttpServletRequest request) {
+		try {
+
+			if (result.hasErrors()) {
+				return "meucadastro";
+			}
+
+			UsuarioManager manager = new UsuarioManager();
+			manager.salvaMeuCadastro(cadastro);
+			MessageUtil.sucesso(redirectAttributes, "Parabéns!", "Dados salvos com sucesso!");
+
+			return "redirect:meucadastro";
+		} catch (Exception e) {
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+			return "redirect:meucadastro";
+		}
+	}
+
+	@RequestMapping(value = "/cadastrospendentesedita/{id}", method = GET)
+	public ModelAndView editaCadastroPendente(@PathVariable String id, RedirectAttributes redirectAttributes, HttpSession session) {
+		UsuarioManager manager = new UsuarioManager();
+		Cadastro cadastro = null;
+		try {
+			cadastro = manager.criaCadastroDeParceiroDeNegocios(id);
+		} catch (Exception e) {
+			cadastro = new Cadastro();
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+		}
+		return new ModelAndView("cadastrospendentesedita", "cadastro", cadastro);
+	}
+
+	@RequestMapping(value = "/cadastrospendentesedita", method = POST)
+	public String editaCadastroPendente(@Valid final Cadastro cadastro, BindingResult result, RedirectAttributes redirectAttributes, HttpSession session,
+			HttpServletRequest request) {
+		try {
+
+			if (result.hasErrors()) {
+				return "cadastrospendentesedita";
+			}
+
+			UsuarioManager manager = new UsuarioManager();
+			manager.salvaCadastroPendente(cadastro);
+			MessageUtil.sucesso(redirectAttributes, "Parabéns!", "Dados salvos com sucesso!");
+
+			return "redirect:cadastrospendentesedita/" + cadastro.getcBPartnerId();
+		} catch (Exception e) {
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+			return "redirect:cadastrospendentesedita/" + cadastro.getcBPartnerId();
+		}
+	}
+
+	@RequestMapping(value = "/cadastrospendentespaga", method = POST)
+	public String salvaCadastroPendenteEPaga(@Valid final Cadastro cadastro, BindingResult result, RedirectAttributes redirectAttributes, HttpSession session,
+			HttpServletRequest request) {
+		try {
+
+			if (result.hasErrors()) {
+				return "cadastrospendentesedita";
+			}
+
+			UsuarioManager manager = new UsuarioManager();
+			manager.salvaCadastroPendente(cadastro);
+			MessageUtil.sucesso(redirectAttributes, "Parabéns!", "Dados salvos com sucesso!");
+
+			try {
+				manager.pagaCadastroPendente(SessionUtil.getUsuarioId(session), cadastro);
+			} catch (Exception e) {
+				MessageUtil.erro(redirectAttributes, "ERRO ao pagar cadastro",
+						"Registro foi salvo com sucesso, porém não foi possível pagar o titulo.<br><br>Motivo: " + e.getMessage());
+				return "redirect:cadastrospendentesedita/" + cadastro.getcBPartnerId();
+			}
+
+			return "redirect:cadastrospendentesedita/" + cadastro.getcBPartnerId();
+		} catch (Exception e) {
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+			return "redirect:cadastrospendentesedita/" + cadastro.getcBPartnerId();
+		}
+	}
+
+	@RequestMapping("validapatrocinador")
+	public void validaPatrocinador(String login, HttpServletResponse response) throws Exception {
+		Usuario usuario = DaoFactory.getInstance().getUsuarioDao().carregaPorLogin(login);
+		if (usuario != null)
+			response.getWriter().write(usuario.getParceiroNegocios().getNome());
+		else
+			response.getWriter().write("");
+		response.setStatus(200);
+	}
+
+}

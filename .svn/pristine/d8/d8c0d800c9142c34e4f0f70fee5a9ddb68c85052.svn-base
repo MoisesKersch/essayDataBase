@@ -1,0 +1,44 @@
+package br.com.adaptaconsultoria.amr.persistence.jpa;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.Query;
+
+import br.com.adaptaconsultoria.amr.model.RedeBinaria;
+import br.com.adaptaconsultoria.amr.persistence.dao.RedeBinariaDao;
+
+/**
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class HRedeBinariaDao extends HDao<RedeBinaria> implements RedeBinariaDao {
+
+	@Override
+	public List<RedeBinaria> listaPorID(String ids) throws Exception {
+		String query = "SELECT obj FROM RedeBinaria obj";
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		String[] id = ids.split(",");
+		for (int i = 0; i < id.length; i++) {
+			if (i == 0)
+				query += " WHERE obj.id IN (:id0)";
+			else
+				query += " OR obj.id IN (:id" + i + ")";
+
+			parametros.put("id" + i, id[i]);
+		}
+
+		return pesquisa(query, parametros);
+	}
+
+	@Override
+	public String carregaIDPorUsuario(String adUserId) throws Exception {
+		Query q = getEntityManager().createNativeQuery("SELECT amr_montarede('" + adUserId + "', '0')");
+		return (String) q.getSingleResult();
+	}
+
+}

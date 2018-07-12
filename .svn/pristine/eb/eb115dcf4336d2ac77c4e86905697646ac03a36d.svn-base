@@ -1,0 +1,169 @@
+package br.com.adaptaconsultoria.amr.model;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+@SuppressWarnings("serial")
+@Entity
+@Table(name = "amr_redelinear")
+public class RedeLinear implements Serializable {
+
+	@Id
+	@Column(name = "amr_redelinear_id")
+	private String id;
+	@Column(name = "ad_client_id")
+	private String adClientId;
+	@Column(name = "ad_org_id")
+	private String adOrgId;
+	@Column(name = "ordem")
+	private Integer ordem;
+	@Column(name = "ad_user_id")
+	private String adUserId;
+	@Column(name = "c_bpartner_id")
+	private String cBpartnerId;
+	@Column(name = "name")
+	private String name;
+	@Column(name = "username")
+	private String username;
+	@Column(name = "direto")
+	private String direto;
+	@Column(name = "direto_nome")
+	private String diretoNome;
+	@Column(name = "direto_username")
+	private String diretoUsername;
+	@Column(name = "tooltip")
+	private String tooltip;
+	@Column(name = "perfil")
+	private String perfil;
+	@Column(name = "icone")
+	private String icone;
+
+	public RedeLinear() {
+		super();
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getAdClientId() {
+		return adClientId;
+	}
+
+	public void setAdClientId(String adClientId) {
+		this.adClientId = adClientId;
+	}
+
+	public String getAdOrgId() {
+		return adOrgId;
+	}
+
+	public void setAdOrgId(String adOrgId) {
+		this.adOrgId = adOrgId;
+	}
+
+	public String getAdUserId() {
+		return adUserId;
+	}
+
+	public void setAdUserId(String adUserId) {
+		this.adUserId = adUserId;
+	}
+
+	public Integer getOrdem() {
+		return ordem;
+	}
+
+	public void setOrdem(Integer ordem) {
+		this.ordem = ordem;
+	}
+
+	public String getcBpartnerId() {
+		return cBpartnerId;
+	}
+
+	public void setcBpartnerId(String cBpartnerId) {
+		this.cBpartnerId = cBpartnerId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getDireto() {
+		return direto;
+	}
+
+	public void setDireto(String direto) {
+		this.direto = direto;
+	}
+
+	public String getDiretoNome() {
+		return diretoNome;
+	}
+
+	public void setDiretoNome(String diretoNome) {
+		this.diretoNome = diretoNome;
+	}
+
+	public String getDiretoUsername() {
+		return diretoUsername;
+	}
+
+	public void setDiretoUsername(String diretoUsername) {
+		this.diretoUsername = diretoUsername;
+	}
+
+	public String getTooltip() {
+		return tooltip;
+	}
+
+	public void setTooltip(String tooltip) {
+		this.tooltip = tooltip;
+	}
+
+	public String getPerfil() {
+		return perfil;
+	}
+
+	public void setPerfil(String perfil) {
+		this.perfil = perfil;
+	}
+
+	public String getIcone() {
+		return icone;
+	}
+
+	public void setIcone(String icone) {
+		this.icone = icone;
+	}
+
+}

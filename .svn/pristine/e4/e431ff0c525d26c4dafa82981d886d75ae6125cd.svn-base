@@ -1,0 +1,49 @@
+package br.com.adaptaconsultoria.amr.persistence.jpa;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import br.com.adaptaconsultoria.amr.model.Extrato;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.persistence.dao.ExtratoDao;
+
+/**
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class HExtratoDao extends HDao<Extrato> implements ExtratoDao {
+
+	@Override
+	public List<Extrato> carregaPorUsuario(String adUserId, Date dataInicial, Date dataFinal) throws Exception {
+		String query = "SELECT obj FROM Extrato obj WHERE obj.adUserId = :adUserId ";
+
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		parametros.put("adUserId", adUserId);
+
+		query += "AND TRUNC(obj.dataInicial) <= :dataFinal AND TRUNC(obj.dataFinal) >= :dataInicial";
+
+		parametros.put("dataInicial", dataInicial);
+		parametros.put("dataFinal", dataFinal);
+
+		return pesquisa(query, parametros);
+	}
+
+	public static void main(String[] args) throws ParseException, Exception {
+		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+		List<Extrato> lista = DaoFactory.getInstance().getExtratoDao()
+				.carregaPorUsuario("E5B8FC1E52C64CC6969DCEFB88D8B6C2", dateFormat.parse("01-01-2015"), dateFormat.parse("01-02-2015"));
+		for (Extrato e : lista) {
+			System.out.println(e.getDataInicial());
+		}
+	}
+
+}

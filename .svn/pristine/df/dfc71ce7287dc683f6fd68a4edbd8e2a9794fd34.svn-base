@@ -1,0 +1,83 @@
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+    	<title>Back Office</title>
+
+		<link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/resources/css/bootstrap-theme.min.css" />">
+		<link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/resources/css/bootstrap.min.css" />">
+		<link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/resources/css/style.css" />">
+		<link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/resources/css/jquery-ui.css" />">
+		<link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/resources/css/jquerysctipttop.css" />">
+		<link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/resources/css/font-awesome.min.css" />">
+		
+		<script src="<c:url value="/resources/js/jquery-1.11.1.min.js" />" ></script>
+       	<script src="<c:url value="/resources/js/bootstrap.min.js" />" ></script>
+       	<script src="<c:url value="/resources/js/jquery.bootstrap-growl.js" />" ></script>
+       	<script src="<c:url value="/resources/js/jquery.maskedinput.min.js" />" ></script>
+       	<script src="<c:url value="/resources/js/script.js" />" ></script>
+       	<script src="<c:url value="/resources/js/jquery-ui.js" />" ></script>
+       	<script src="<c:url value="/resources/js/angular-1.0.1.min.js" />" ></script>
+       	<script src="<c:url value="/resources/js/custom.js" />" ></script>
+
+	</head>
+	
+	<body>
+		
+		<div class="container-fluid">
+			<jsp:include page="message.jsp" />
+
+			<br></br>
+			<br></br>
+			<br></br>
+			<br></br>
+
+  			<div class="row">
+				<div class="center-block form">
+						
+					<div class="row">
+						<form:form class="form-horizontal" action="esqueciminhasenha" method="post" commandName="login" role="form" autocomplete="off">
+					  		
+					  		<form:hidden path="senha"/>
+					  		
+					  		<div class="form-group">
+					    		<label for="login" class="col-sm-2 control-label">E-Mail</label>
+					    		<div class="col-sm-10">
+									<form:input class="form-control width400" path="login" id="email" name="email" maxlength="120"/>
+					    			<form:errors path="login" cssClass="tooltip-erro"/>
+					    		</div>
+					  		</div>
+					  		
+							<div class="form-group">
+								<div class="col-sm-offset-2 col-sm-2 text-center">
+									<button type="submit" name="action" class="btn btn-primary" value="redefinir">
+										<span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
+										Redefinir
+									</button>
+								</div>
+							
+								<div class="col-sm-2 text-center">
+									<a href="inicio" class="btn btn-danger">
+										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+										Cancelar
+									</a>
+								</div>
+							</div>
+							
+						</form:form>
+					</div>
+				</div>				
+			</div>
+		</div>
+				
+	</body>
+
+	<script>
+		$("#email").focus();	
+	</script>
+
+</html>

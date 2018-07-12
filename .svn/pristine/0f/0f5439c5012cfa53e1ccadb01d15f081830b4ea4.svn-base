@@ -1,0 +1,101 @@
+package br.com.adaptaconsultoria.amr.model;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@SuppressWarnings("serial")
+@Entity
+@Table(name = "amr_pacote")
+public class Pacote implements Serializable {
+
+	@Id
+	@Column(name = "m_product_id")
+	private String id;
+	@Column(name = "ad_client_id")
+	private String adClientId;
+	@Column(name = "ad_org_id")
+	private String adOrgId;
+	@Column(name = "description")
+	private String descricao;
+	@Column(name = "obrigatorio_adesao")
+	private String obrigatorioAdesao;
+	@Column(name = "imageurl")
+	private String imageURL;
+	@Column(name = "pricelist")
+	private String pricelist;
+	@Column(name = "qty_adesao")
+	private Integer quantidadeAdesao;
+
+	public Pacote() {
+		super();
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getAdClientId() {
+		return adClientId;
+	}
+
+	public void setAdClientId(String adClientId) {
+		this.adClientId = adClientId;
+	}
+
+	public String getAdOrgId() {
+		return adOrgId;
+	}
+
+	public void setAdOrgId(String adOrgId) {
+		this.adOrgId = adOrgId;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public String getObrigatorioAdesao() {
+		return obrigatorioAdesao;
+	}
+
+	public void setObrigatorioAdesao(String obrigatorioAdesao) {
+		this.obrigatorioAdesao = obrigatorioAdesao;
+	}
+
+	public String getImageURL() {
+		return imageURL;
+	}
+
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
+
+	public String getPricelist() {
+		return pricelist;
+	}
+
+	public void setPricelist(String pricelist) {
+		this.pricelist = pricelist;
+	}
+
+	public Integer getQuantidadeAdesao() {
+		return quantidadeAdesao;
+	}
+
+	public void setQuantidadeAdesao(Integer quantidadeAdesao) {
+		this.quantidadeAdesao = quantidadeAdesao;
+	}
+
+}

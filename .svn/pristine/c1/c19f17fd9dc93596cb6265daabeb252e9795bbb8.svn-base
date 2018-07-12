@@ -1,0 +1,61 @@
+package br.com.adaptaconsultoria.amr.persistence.jpa;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.Query;
+
+import br.com.adaptaconsultoria.amr.model.Usuario;
+import br.com.adaptaconsultoria.amr.persistence.dao.UsuarioDao;
+
+/**
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class HUsuarioDao extends HDao<Usuario> implements UsuarioDao {
+
+	@Override
+	public Usuario carregaPorLogin(String login) throws Exception {
+		String query = "SELECT obj FROM Usuario obj WHERE UPPER(obj.login) = UPPER(:login)";
+
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		parametros.put("login", login);
+
+		return carrega(query, parametros);
+	}
+
+	@Override
+	public Usuario carregaPorParceiroNegocios(String cBPartnerId) throws Exception {
+		String query = "SELECT obj FROM Usuario obj WHERE obj.parceiroNegocios.id = :cBPartnerId";
+
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		parametros.put("cBPartnerId", cBPartnerId);
+
+		List<Usuario> lista = pesquisa(query, parametros);
+		if (lista != null && !lista.isEmpty())
+			return lista.get(0);
+
+		return null;
+	}
+
+	@Override
+	public String carregaIDDoUsuarioPatrocinador(String adUserId) throws Exception {
+		Query q = getEntityManager().createNativeQuery("SELECT amr_getpatrocinador('" + adUserId + "')");
+		return (String) q.getSingleResult();
+	}
+
+	@Override
+	public Usuario carregaPorEMail(String email) throws Exception {
+		String query = "SELECT obj FROM Usuario obj JOIN obj.parceiroNegocios p WHERE p.email = :email";
+
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		parametros.put("email", email);
+
+		return carrega(query, parametros);
+	}
+
+}

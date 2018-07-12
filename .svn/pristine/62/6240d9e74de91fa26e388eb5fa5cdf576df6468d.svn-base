@@ -1,0 +1,116 @@
+function inteiro(e) {
+	var tecla = (window.event) ? event.keyCode : e.which;
+	if ((tecla > 47 && tecla < 58))
+		return true;
+	else {
+		if (tecla == 8 || tecla == 0)
+			return true;
+		else
+			return false;
+	}
+}
+
+function postAjaxRegion(action, jsp, divName) {
+	try {
+		$.post(action + "?exibe=true&jsp=" + jsp, {}, function(resposta) {
+			$("#" + divName).html(resposta);
+			$("#" + divName).style.display = 'block';
+		});
+	} catch (e) {
+		alert(e);
+	}
+}
+
+function postUpdateAjaxRegion(action, divName) {
+	try {
+		$.post(action, {}, function(resposta) {
+			$("#" + divName).html(resposta);
+			$("#" + divName).style.display = 'block';
+		});
+	} catch (e) {
+		alert(e);
+	}
+}
+
+function postFormAjaxRegion(action, object, divName) {
+	try {
+		$.post(action, object, function(resposta) {
+			$("#" + divName).html(resposta);
+			$("#" + divName).style.display = 'block';
+		});
+	} catch (e) {
+		alert(e);
+	}
+}
+
+function escondeAjaxRegion(action, divName) {
+	try {
+		$.post(action + "?exibe=false", {}, function(resposta) {
+			$("#" + divName).html('');
+			$("#" + divName).style.display = 'none';
+		});
+	} catch (e) {
+		alert(e);
+	}
+}
+
+function getAjaxRegion(action, divName) {
+	try {
+		$.get(action, {}, function(resposta) {
+			$("#" + divName).html(resposta);
+		});
+	} catch (e) {
+		alert(e);
+	}
+}
+
+function decimal(value, event, numero, decimais) {
+
+	var tecla = (window.event) ? event.keyCode : event.which;
+
+	if (tecla == 8 || tecla == 0)
+		return true;
+
+	var separador = ",";
+	var teclaSeparador = 44;
+	//var separador = ".";
+	//var teclaSeparador = 46;
+
+	if ((tecla > 47 && tecla < 58)) {
+		var index = value.indexOf(separador);
+		if (value.length >= numero && index <= 0)
+			return false;
+
+		var casas = 0;
+		if (index >= 0)
+			casas = value.length - index;
+
+		if (casas > decimais)
+			return false;
+
+		return true;
+	}
+
+	else {
+		if (tecla == teclaSeparador) {
+			if (value.indexOf(separador) > 0)
+				return false;
+			if (value.length <= 0)
+				return false;
+			return true;
+		} else
+			return false;
+	}
+}
+
+function get(action) {
+	getAjaxRegion(action, 'divContent');
+}
+
+function post(action, object) {
+	postFormAjaxRegion(action, object, 'divContent');
+}
+
+function postInDiv(action, object, div) {
+	postFormAjaxRegion(action, object, div);
+}

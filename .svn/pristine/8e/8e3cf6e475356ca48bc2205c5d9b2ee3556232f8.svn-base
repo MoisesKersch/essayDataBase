@@ -1,0 +1,98 @@
+package br.com.adaptaconsultoria.amr.springmvc.controller;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import br.com.adaptaconsultoria.amr.manager.UpgradeManager;
+import br.com.adaptaconsultoria.amr.model.Produto;
+import br.com.adaptaconsultoria.amr.model.Upgrade;
+import br.com.adaptaconsultoria.amr.springmvc.form.UpgradeForm;
+import br.com.adaptaconsultoria.amr.springmvc.util.MessageUtil;
+import br.com.adaptaconsultoria.amr.springmvc.util.SessionUtil;
+
+/**
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+@Controller
+@Scope("session")
+public class UpgradeController {
+
+	private List<Produto> produtos;
+
+	@RequestMapping(value = "/upgrade", method = GET)
+	public ModelAndView upgrade(HttpSession session) {
+		SessionUtil.setMenuAtivo(session, "upgrade");
+		SessionUtil.setSubMenuAtivo(session, "upgrade");
+
+		this.produtos = null;
+
+		ModelAndView model = new ModelAndView("upgrade", "upgrade", new UpgradeForm());
+		return model;
+	}
+
+	@RequestMapping(value = "/upgradenovo", method = POST)
+	public String upgrade(Upgrade form, RedirectAttributes redirectAttributes, HttpSession session, HttpServletRequest request) {
+		try {
+
+			try {
+				atualizaProdutos(request, session);
+			} catch (Exception e) {
+				throw new Exception("Serviço web para listar os produtos não esta acessivel: " + e.getMessage());
+			}
+
+			UpgradeManager manager = new UpgradeManager();
+			Upgrade upgrade = new Upgrade();
+			upgrade.setAdUserId(SessionUtil.getUsuarioId(session));
+			upgrade.setProdutos(this.produtos);
+			manager.enviaUpgrade(upgrade);
+			MessageUtil.sucesso(redirectAttributes, "Parabéns!", "Upgrade efetuado com sucesso");
+
+			this.produtos = null;
+			return "redirect:upgrade";
+		} catch (Exception e) {
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+			return "redirect:upgrade";
+		}
+	}
+
+	private void atualizaProdutos(HttpServletRequest request, HttpSession session) throws Exception {
+		if (this.produtos == null)
+			this.produtos = listaProdutos(session);
+
+		for (int i = 0; i < this.produtos.size(); i++) {
+			String selecionado = request.getParameter("inpSelecionado" + this.produtos.get(i).getCodigo());
+			this.produtos.get(i).setSelecionado(selecionado != null && !selecionado.isEmpty() && !selecionado.equalsIgnoreCase("null"));
+		}
+	}
+
+	@RequestMapping(value = "/listapacotesupgrade", method = RequestMethod.GET)
+	public @ResponseBody List<Produto> listaProdutos(HttpSession session) {
+		if (this.produtos == null) {
+			UpgradeManager manager = new UpgradeManager();
+			try {
+				produtos = manager.listaProdutosDisponiveis(SessionUtil.getUsuarioId(session));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return this.produtos;
+	}
+
+}

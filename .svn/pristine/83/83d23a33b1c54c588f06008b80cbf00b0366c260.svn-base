@@ -1,0 +1,90 @@
+package br.com.adaptaconsultoria.amr.manager;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import br.com.adaptaconsultoria.amr.model.Adesao;
+import br.com.adaptaconsultoria.amr.model.Cadastro;
+import br.com.adaptaconsultoria.amr.model.Pacote;
+import br.com.adaptaconsultoria.amr.model.Produto;
+import br.com.adaptaconsultoria.amr.model.RetEnvAdesao;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.proxy.AdesaoServiceProxy;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class AdesaoManager {
+
+	public void enviaAdesao(Cadastro cadastro) throws Exception {
+		Adesao adesao = new Adesao();
+		adesao.setParceiro(cadastro);
+		String xml = adesao.toXML();
+
+		AdesaoServiceProxy proxy = new AdesaoServiceProxy();
+		RetEnvAdesao retEnvAdesao = proxy.doPost(xml);
+		if (!retEnvAdesao.isSucesso()) {
+			throw new Exception(retEnvAdesao.getDescricao());
+		}
+	}
+
+	public List<Produto> listaProdutosDisponiveis() throws Exception {
+		List<Produto> produtos = new ArrayList<Produto>();
+		List<Pacote> pacotes = DaoFactory.getInstance().getPacoteDao().lista();
+		for (int i = 0; i < pacotes.size(); i++) {
+			Produto produto = new Produto();
+			produto.setId(pacotes.get(i).getId());
+			produto.setCodigo(pacotes.get(i).getId());
+			produto.setNome(pacotes.get(i).getDescricao());
+			produto.setReadOnly(pacotes.get(i).getObrigatorioAdesao().equalsIgnoreCase("Y"));
+			produto.setSelecionado(pacotes.get(i).getObrigatorioAdesao().equalsIgnoreCase("Y"));
+			produto.setImagemURL(pacotes.get(i).getImageURL());
+			produto.setPreco(pacotes.get(i).getPricelist());
+			produtos.add(produto);
+		}
+		return produtos;
+	}
+
+	public static void main(String[] args) throws Exception {
+		AdesaoManager manager = new AdesaoManager();
+
+		Cadastro cadastro = new Cadastro();
+
+		cadastro.setPatrocinador("ope");
+		cadastro.setNome("Jack Tequila");
+		cadastro.setCpfCnpj("405.101.758-30");
+		cadastro.setDataNascimento("17/08/1988");
+		cadastro.setEmail("tequila@tequila.com.br");
+		cadastro.setUsuario("tequila");
+		cadastro.setSenha("a");
+		cadastro.setCep("89833-222");
+		cadastro.setRua("Almena do Manda Chuva");
+		cadastro.setNumero("5");
+		cadastro.setBairro("Centro");
+
+		cadastro.setTipoTelefone1("Residêncial");
+		cadastro.setDddTelefone1("49");
+		cadastro.setNumeroTelefone1("88882122");
+
+		List<Produto> produtos = new ArrayList<Produto>();
+		Produto produto = new Produto();
+		produto.setId("3BE4E6DFB3184AD29FDE87D612ED918D");
+		produto.setCodigo("006644");
+		produto.setNome("CANO GALVANIZADO 1 METRO N 1 E 2 MENEGAZZO");
+		produto.setSelecionado(true);
+		produtos.add(produto);
+		cadastro.setProdutos(produtos);
+
+		manager.enviaAdesao(cadastro);
+		// <?xml version="1.0" encoding="UTF-8"?><retProdutosDisponiveis><produtos><produto id="C499DDD3B7FD459385F73851887336F0" codigo="006647">CURVA P/FOGAO LENHA LONGA N 1 E 2
+		// ZATTI</produto><produto id="3BE4E6DFB3184AD29FDE87D612ED918D" codigo="006644">CANO GALVANIZADO 1 METRO N 1 E 2 MENEGAZZO</produto><produto
+		// id="812D1CA3F9E3449A8E3E4F40262F4BB1" codigo="006649">TELHAO P/FOGAO LENHA N 1 E
+		// 2</produto></produtos><retorno><sucesso>true</sucesso><descricao></descricao></retorno></retProdutosDisponiveis>
+	}
+
+}

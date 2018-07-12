@@ -1,0 +1,47 @@
+package br.com.adaptaconsultoria.amr.persistence.jpa;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.Query;
+
+import br.com.adaptaconsultoria.amr.model.RedeLinear;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.persistence.dao.RedeLinearDao;
+
+/**
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class HRedeLinearDao extends HDao<RedeLinear> implements RedeLinearDao {
+
+	@Override
+	public List<RedeLinear> carregaPorUsuario(String adUserId) throws Exception {
+		String query = "SELECT obj FROM RedeLinear obj WHERE obj.adUserId = :adUserId";
+
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		parametros.put("adUserId", adUserId);
+
+		return pesquisa(query, parametros);
+	}
+
+	@Override
+	public Boolean descente(String cBPartnerRaizId, String cBPartnerId) throws Exception {
+		Query q = getEntityManager().createNativeQuery("SELECT amr_descendentelinear('" + cBPartnerRaizId + "', '" + cBPartnerId + "')");
+		String resultado = (String) q.getSingleResult();
+		return resultado.equalsIgnoreCase("Y");
+	}
+
+	public static void main(String[] args) throws Exception {
+		// List<RedeLinear> rede = DaoFactory.getInstance().getRedeLinearDao().carregaPorUsuario("BB64D2488C6842BDB381C6F2F98D03F1");
+		List<RedeLinear> rede = DaoFactory.getInstance().getRedeLinearDao().carregaPorUsuario("BB64D2488C6842BDB381C6F2F98D03F1");
+		for (int i = 0; i < rede.size(); i++) {
+			System.out.println(rede.get(i).getId() + " - " + rede.get(i).getDiretoNome() + " - " + rede.get(i).getName() + " - " + rede.get(i).getUsername());
+		}
+	}
+
+}

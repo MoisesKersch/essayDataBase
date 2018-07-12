@@ -1,0 +1,49 @@
+package br.com.adaptaconsultoria.amr.manager;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import br.com.adaptaconsultoria.amr.model.PacoteUpgrade;
+import br.com.adaptaconsultoria.amr.model.Produto;
+import br.com.adaptaconsultoria.amr.model.RetEnvUpgrade;
+import br.com.adaptaconsultoria.amr.model.Upgrade;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.proxy.UpgradeServiceProxy;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class UpgradeManager {
+
+	public void enviaUpgrade(Upgrade upgrade) throws Exception {
+
+		String xml = upgrade.toXML();
+
+		UpgradeServiceProxy proxy = new UpgradeServiceProxy();
+		RetEnvUpgrade retEnvUpgrade = proxy.doPost(xml);
+		if (!retEnvUpgrade.isSucesso()) {
+			throw new Exception(retEnvUpgrade.getDescricao());
+		}
+	}
+
+	public List<Produto> listaProdutosDisponiveis(String adUserId) throws Exception {
+		List<Produto> produtos = new ArrayList<Produto>();
+		List<PacoteUpgrade> pacotes = DaoFactory.getInstance().getPacoteUpgradeDao().carregaPorUsuario(adUserId);
+		for (int i = 0; i < pacotes.size(); i++) {
+			Produto produto = new Produto();
+			produto.setId(pacotes.get(i).getId());
+			produto.setCodigo(pacotes.get(i).getId());
+			produto.setNome(pacotes.get(i).getDescricao());
+			produto.setImagemURL(pacotes.get(i).getImageURL());
+			produto.setPreco(pacotes.get(i).getPricelist().toString());
+			produtos.add(produto);
+		}
+		return produtos;
+	}
+
+}

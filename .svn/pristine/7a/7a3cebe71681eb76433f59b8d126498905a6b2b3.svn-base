@@ -1,0 +1,73 @@
+package br.com.adaptaconsultoria.amr.manager;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import br.com.adaptaconsultoria.amr.model.RedeLinear;
+import br.com.adaptaconsultoria.amr.model.Usuario;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class RedeLinearManager {
+
+	public List<String> montaRedeLinearHTML5(String adUserId) throws Exception {
+
+		List<String> itens = new ArrayList<String>();
+		itens.add("<ul><li>");
+
+		List<RedeLinear> rede = DaoFactory.getInstance().getRedeLinearDao().carregaPorUsuario(adUserId);
+
+		if (rede == null || rede.isEmpty()) {
+			Usuario usuario = DaoFactory.getInstance().getUsuarioDao().carregaPorId(adUserId);
+			if (usuario != null) {
+				itens.add(item(usuario.getLogin(), usuario.getNome(), "", null));
+			}
+		}
+
+		else {
+			itens.add(item(rede.get(0).getUsername(), rede.get(0).getName(), rede.get(0).getTooltip(), rede.get(0).getIcone()));
+		}
+
+		itens.add("<ul>");
+		for (int i = 1; i < rede.size(); i++) {
+			itens.add("<li>");
+			itens.add(item(rede.get(i).getId(), rede.get(i).getDiretoUsername(), rede.get(i).getDiretoNome(), rede.get(i).getTooltip(), rede.get(i).getIcone()));
+			itens.add("</li>");
+		}
+		itens.add("</ul>");
+		itens.add("</li></ul>");
+
+		return itens;
+	}
+
+	private String item(String login, String nome, String tooltip, String icone) throws Exception {
+		if (icone == null || icone.isEmpty())
+			icone = "<c:url value=\"/resources/img/icone-pessoa-padrao.png\" />";
+
+		String label = "<span style=\"cursor: pointer;\" title=\"" + tooltip + "\">";
+		label += "<i class=\"icon-folder-open\"></i>";
+		label += "<img src=\"" + icone + "\" class=\"img-thumbnail-icon-linear\">";
+		label += nome + "</span>";
+
+		return label;
+	}
+
+	private String item(String adUserId, String login, String nome, String tooltip, String icone) throws Exception {
+		if (icone == null || icone.isEmpty())
+			icone = "<c:url value=\"/resources/img/icone-pessoa-padrao.png\" />";
+
+		String label = "<span style=\"cursor: pointer;\" onclick=\"recarrega('" + adUserId + "');\" title=\"" + tooltip + "\">";
+		label += "<i class=\"icon-folder-open\"></i>";
+		label += "<img src=\"" + icone + "\" class=\"img-thumbnail-icon-linear\">";
+		label += nome + "</span>";
+		return label;
+	}
+
+}

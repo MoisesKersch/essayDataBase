@@ -1,0 +1,500 @@
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>	
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+    	<title>BackOffice</title>
+
+		<link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/resources/css/bootstrap-theme.min.css" />">
+		<link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/resources/css/bootstrap.min.css" />">
+		<link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/resources/css/style.css" />">
+		<link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/resources/css/jquery-ui.css" />">
+		<link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/resources/css/jquerysctipttop.css" />">
+		<link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/resources/css/font-awesome.min.css" />">
+		
+		<script src="<c:url value="/resources/js/jquery-1.11.1.min.js" />" ></script>
+       	<script src="<c:url value="/resources/js/bootstrap.min.js" />" ></script>
+       	<script src="<c:url value="/resources/js/jquery.bootstrap-growl.js" />" ></script>
+       	<script src="<c:url value="/resources/js/jquery.maskedinput.min.js" />" ></script>
+       	<script src="<c:url value="/resources/js/script.js" />" ></script>
+       	<script src="<c:url value="/resources/js/jquery-ui.js" />" ></script>
+       	<script src="<c:url value="/resources/js/angular-1.0.1.min.js" />" ></script>
+       	<script src="<c:url value="/resources/js/custom.js" />" ></script>
+		
+		<script>
+			$(function() {
+				$(".datepicker").datepicker();
+				$(".data").mask("99/99/9999");
+				$(".cep").mask("99999-999");
+				$(".cpf").mask("999.999.999-99");
+			    $(document).tooltip();
+            });
+		</script>
+	</head>
+	
+	<body>
+		
+			<jsp:include page="message.jsp" />
+			
+			<table class="widthTotal">
+				<tr>
+					<td width="190px" valign="top">
+						<jsp:include page="menu.jsp" />
+					</td>
+					
+					<td width="5px"></td>
+			
+					<td valign="top">
+		  				<div id="divContent">
+		  					
+							<div class="center-block form">
+																
+								<div class="row">
+									<form:form id="formNovoCadastro" name="formNovoCadastro" class="form-horizontal" action="novocadastronovo" method="post" commandName="cadastro" role="form">
+										
+										<div class="form-group">
+								    		<label for="patrocinador" class="col-sm-2 control-label">Patrocinador:</label>
+								    		<div class="col-sm-10">
+												<form:input class="form-control width400" path="patrocinador" id="patrocinador" maxlength="60" readonly="true"/>
+								    			<form:errors path="patrocinador" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		
+								  		
+								  		<div class="form-group list-group-item">
+								  			<div id="divProdutos"></div>
+								  		</div>
+								  		<br>	
+								  		
+								  		<div class="form-group">
+								    		<label for="nome" class="col-sm-2 control-label">Nome:</label>
+								    		<div class="col-sm-10">
+												<form:input class="form-control width400" path="nome" id="nome" maxlength="60"/>
+								    			<form:errors path="nome" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								    		<label for="cpfCnpj" class="col-sm-2 control-label">CPF:</label>
+								    		<div class="col-sm-10">
+												<form:input class="form-control width200 cpf" path="cpfCnpj" id="cpfCnpj" maxlength="14"/>
+								    			<form:errors path="cpfCnpj" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								    		<label for="dataNascimento" class="col-sm-2 control-label">Data de nascimento:</label>
+								    		<div class="col-sm-10">
+												<form:input class="form-control width100 data" path="dataNascimento" id="dataNascimento"/>
+								    			<form:errors path="dataNascimento" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								
+								  		<div class="form-group">
+								    		<label for="genero" class="col-sm-2 control-label">Gênero</label>
+								    		<div class="col-sm-10">
+												<form:radiobutton path="genero" value="M"/><span class="radio-label">Masculino</span>
+												<form:radiobutton path="genero" value="F"/><span class="radio-label">Feminino</span>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								    		<label for="email" class="col-sm-2 control-label">E-Mail</label>
+								    		<div class="col-sm-10">
+												<form:input class="form-control width400" path="email" id="email" maxlength="80"/>
+								    			<form:errors path="email" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+										
+										<div class="form-group">
+								    		<label for="usuario" class="col-sm-2 control-label">Usuário</label>
+								    		<div class="col-sm-10">
+												<form:input class="form-control width400" path="usuario" id="usuario" maxlength="80" autocomplete="off"/>
+								    			<form:errors path="usuario" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		  		
+								  		<div class="form-group">
+								    		<label for="senha" class="col-sm-2 control-label">Senha</label>
+								    		<div class="col-sm-10">
+								    			<form:password class="form-control width400" path="senha" id="senha" maxlength="60" autocomplete="off"/>
+								    			<form:errors path="senha" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+												
+										<div class="page-header">
+									  		<h2>Telefones</h2>
+										</div>
+										
+										<div class="form-group">
+								    		<label for="tipoTelefone1" class="col-sm-1 control-label">Tipo:</label>
+								    		<div class="col-sm-2">
+												<form:select class="form-control width150" path="tipoTelefone1" id="tipoTelefone1">
+												   <form:option value="Celular" label="Celular"/>   
+												</form:select>
+								    			<form:errors path="tipoTelefone1" cssClass="tooltip-erro"/>
+								    		</div>
+								    		<label for="dddTelefone1" class="col-sm-2 control-label">Número:</label>
+								    		<div class="col-sm-1">
+												<form:input class="form-control width30" path="dddTelefone1" id="dddTelefone1" maxlength="2" onkeypress="return inteiro(event);"/>
+												<form:errors path="dddTelefone1" cssClass="tooltip-erro"/>
+								    		</div>
+								    		<div class="col-sm-4">
+												<form:input class="form-control width100" path="numeroTelefone1" id="numeroTelefone1" maxlength="9" onkeypress="return inteiro(event);"/>
+								    			<form:errors path="numeroTelefone1" cssClass="tooltip-erro"/>
+								    		</div>
+								    		<label for="operadoraTelefone1" class="col-sm-1 control-label">Operadora:</label>
+								    		<div class="col-sm-1">
+												<form:select class="form-control width100" path="operadoraTelefone1" id="operadoraTelefone1">
+												   <form:option value="CLARO" label="CLARO"/>
+												   <form:option value="OI" label="OI"/>
+												   <form:option value="TIM" label="TIM"/>
+												   <form:option value="VIVO" label="VIVO"/>				   
+												</form:select>
+								    			<form:errors path="operadoraTelefone1" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+							
+								  		<div class="form-group">
+								    		<label for="tipoTelefone2" class="col-sm-1 control-label">Tipo:</label>
+								    		<div class="col-sm-2">
+												<form:select class="form-control width150" path="tipoTelefone2" id="tipoTelefone2">
+												   <form:option value="Residencial" label="Residêncial"/>		   
+												</form:select>
+								    			<form:errors path="tipoTelefone2" cssClass="tooltip-erro"/>
+								    		</div>
+								    		<label for="dddTelefone2" class="col-sm-2 control-label">Número:</label>
+								    		<div class="col-sm-1">
+												<form:input class="form-control width30" path="dddTelefone2" id="dddTelefone2" maxlength="2" onkeypress="return inteiro(event);"/>
+												<form:errors path="dddTelefone2" cssClass="tooltip-erro"/>
+								    		</div>
+								    		<div class="col-sm-4">
+												<form:input class="form-control width100" path="numeroTelefone2" id="numeroTelefone2" maxlength="9" onkeypress="return inteiro(event);"/>
+								    			<form:errors path="numeroTelefone2" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								    		<label for="tipoTelefone3" class="col-sm-1 control-label">Tipo:</label>
+								    		<div class="col-sm-2">
+												<form:select class="form-control width150" path="tipoTelefone3" id="tipoTelefone3">
+												   <form:option value="Adicional" label="Adicional"/>		   
+												</form:select>
+								    			<form:errors path="tipoTelefone3" cssClass="tooltip-erro"/>
+								    		</div>
+								    		<label for="dddTelefone3" class="col-sm-2 control-label">Número:</label>
+								    		<div class="col-sm-1">
+												<form:input class="form-control width30" path="dddTelefone3" id="dddTelefone3" maxlength="2" onkeypress="return inteiro(event);"/>
+												<form:errors path="dddTelefone3" cssClass="tooltip-erro"/>
+								    		</div>
+								    		<div class="col-sm-4">
+												<form:input class="form-control width100" path="numeroTelefone3" id="numeroTelefone3" maxlength="9" onkeypress="return inteiro(event);"/>
+								    			<form:errors path="numeroTelefone3" cssClass="tooltip-erro"/>
+								    		</div>
+								    		<label for="operadoraTelefone3" class="col-sm-1 control-label">Operadora:</label>
+								    		<div class="col-sm-1">
+												<form:select class="form-control width100" path="operadoraTelefone3" id="operadoraTelefone3">
+													<form:option value="" label=""/>
+												   <form:option value="CLARO" label="CLARO"/>
+												   <form:option value="OI" label="OI"/>
+												   <form:option value="TIM" label="TIM"/>
+												   <form:option value="VIVO" label="VIVO"/>				   
+												</form:select>
+								    			<form:errors path="operadoraTelefone3" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="page-header">
+									  		<h2>Endereço</h2>
+										</div>
+										
+										<div class="form-group">
+								    		<label for="cep" class="col-sm-2 control-label">CEP:</label>
+								    		<div class="col-sm-10">
+												<form:input class="form-control width100 cep" path="cep" id="cep"/>
+								    			<form:errors path="cep" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								    		<label for="rua" class="col-sm-2 control-label">Rua:</label>
+								    		<div class="col-sm-10">
+												<form:input class="form-control width400" path="rua" id="rua" maxlength="80"/>
+								    			<form:errors path="rua" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								    		<label for="numero" class="col-sm-2 control-label">Número:</label>
+								    		<div class="col-sm-10">
+												<form:input class="form-control width100" path="numero" id="numero" maxlength="8" onkeypress="return inteiro(event);"/>
+								    			<form:errors path="numero" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								    		<label for="complemento" class="col-sm-2 control-label">Complemento:</label>
+								    		<div class="col-sm-10">
+												<form:input class="form-control width400" path="complemento" id="complemento" maxlength="80"/>
+								    			<form:errors path="complemento" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								    		<label for="bairro" class="col-sm-2 control-label">Bairro:</label>
+								    		<div class="col-sm-10">
+												<form:input class="form-control width400" path="bairro" id="bairro" maxlength="80"/>
+								    			<form:errors path="bairro" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								    		<label for="pais" class="col-sm-2 control-label">País:</label>
+								    		<div class="col-sm-10">
+												<form:select class="form-control width400" path="pais" id="pais">
+												</form:select>
+								    			<form:errors path="pais" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								    		<label for="estado" class="col-sm-2 control-label">Estado:</label>
+								    		<div class="col-sm-10">
+								    			<form:select class="form-control width400" path="estado" id="estado">
+								    			</form:select>
+								    			<form:errors path="estado" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								    		<label for="cidade" class="col-sm-2 control-label">Cidade:</label>
+								    		<div class="col-sm-10">
+												<form:select class="form-control width400" path="cidade" id="cidade">
+								    			</form:select>
+								    			<form:errors path="cidade" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								    		<label for="referencia" class="col-sm-2 control-label">Referência:</label>
+								    		<div class="col-sm-10">
+												<form:input class="form-control width400" path="referencia" id="referencia" maxlength="80"/>
+								    			<form:errors path="referencia" cssClass="tooltip-erro"/>
+								    		</div>
+								  		</div>
+								  		  		
+								  		<div class="form-group">
+								    		<div class="col-sm-2"></div>
+								    		<div class="col-sm-10">
+								 				<form:checkbox path="residencial" label=" Endereço residêncial"/>
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								  			<div class="col-sm-2"></div>
+								    		<div class="col-sm-10">
+												<form:checkbox path="cobranca" label=" Endereço de cobrança" />
+								    		</div>
+								  		</div>
+								  		
+								  		<div class="form-group">
+								    		<div class="col-sm-2"></div>
+								    		<div class="col-sm-10">
+												<form:checkbox path="correspondencia" label=" Endereço para correspondência"/>
+								    		</div>
+								  		</div>
+								  		
+										<div class="form-group">
+											<div class="col-sm-offset-2 col-sm-10">												
+												<button type="submit" class="btn btn-primary">
+													<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+													Completar
+												</button>
+											</div>
+										</div>
+												
+									</form:form>
+								</div>
+							</div>
+							
+							<c:url var="listaPaisesURL" value="/lista_paises" />
+							<c:url var="listaEstadosURL" value="/lista_estados" />
+							<c:url var="listaCidadesURL" value="/lista_cidades" />
+							<c:url var="listaProdutosURL" value="/lista_produtos" />
+							<script>
+							
+								function calcula() {
+									$(".produto").each(function(index) {
+										//alert(index + ": " + $(this));
+									});
+								}
+							
+								$(document).ready(
+									function() {
+										$.getJSON('${listaProdutosURL}', {
+											ajax : 'true'
+										}, 
+										
+										function(data) {
+											var html = '';
+											var len = data.length;
+											for ( var i = 0; i < len; i++) {
+												html += '<div class="col-sm-3 text-center">';
+												html += '<img src="' + data[i].imagemURL + '" alt="' + data[i].nome + '" class="img-thumbnail"><p></p>';
+												html += '<input ';
+												if (data[i].selecionado)
+													html += ' checked '; 					
+												if (data[i].readOnly)
+													html += ' onclick="return false;" onkeypress="return false;" ';
+												html += 'type="checkbox" value="' + data[i].codigo + '" id="inpSelecionado' + data[i].codigo + '" name="inpSelecionado' + data[i].codigo + '"/>';
+												html += data[i].nome;
+												html += '<p></p><p class="text-center">R$ ' + data[i].preco.replace(".", ",") + '</p>';
+												html+= '</div>';
+											}
+											$('#divProdutos').html(html);
+										});
+								});
+							
+								$(document).ready(
+									function() {
+										$.getJSON('${listaPaisesURL}', {
+											ajax : 'true'
+										}, 
+							
+										function(data) {
+											var html = '';
+											var len = data.length;
+											for ( var i = 0; i < len; i++) {
+												html += '<option value="' + data[i].id + '">'
+														+ data[i].nome + '</option>';
+											}
+											html += '</option>';
+											$('#pais').html(html);
+											$('#pais').val('${cadastro.pais}');				
+										});
+								});
+							
+								$(document).ready( 
+									function() {
+										$.getJSON("${listaEstadosURL}", { 
+											pais : ${cadastro.pais}, 
+											ajax : 'true'
+										},
+							
+										function(data) {
+											var items = "";
+										    $.each(data, function(key) {
+										        items += '<option value="' + data[key].id + '">' + data[key].nome + '</option>';  
+										    });  
+										    $("#estado").html(items);  
+										    $('#estado').val('${cadastro.estado}');
+								    	});
+								});
+							
+								$(document).ready(
+									function() {
+										$.getJSON("${listaCidadesURL}", { 
+											estado : ${cadastro.estado}, 
+											ajax : 'true',
+											completo : 'N'
+										},
+							
+										function(data) {
+											var items = "";
+										    $.each(data, function(key) {
+										        items += '<option value="' + data[key].id + '">' + data[key].nome + '</option>';  
+										    });  
+										    $("#cidade").html(items);  
+										    $('#cidade').val('${cadastro.cidade}');
+								    	});
+								});
+							
+								$(document).ready(function() { 
+									$('#pais').change(
+										function() {
+											$.getJSON("${listaEstadosURL}", { 
+												pais : $('#pais').val(), 
+												ajax : 'true'
+											},
+							
+											function(data) {
+												var items = "";
+											    $.each(data, function(key) {
+											        items += '<option value="' + data[key].id + '">' + data[key].nome + '</option>';  
+											    });  
+											    $("#estado").html(items);  
+											    $('#estado').val('${cadastro.estado}');
+									    	});
+										});
+								});
+							
+								$(document).ready(function() { 
+									$('#cep').change(
+										function() {
+											$.getJSON("${listaCidadesURL}", {
+												ajax : 'true',
+												estado : $('#cep').val(),
+												completo : 'Y'
+											},
+							
+											function(data) {
+												$('#estado').val(data[0].uf);
+												$('#rua').val(data[0].logradouro);
+												$('#bairro').val(data[0].bairro);
+												var cidade = data[0].cidade;
+												
+												$.getJSON("${listaCidadesURL}", { 
+														estado : $('#estado').val(), 
+														ajax : 'true',
+														completo : 'N'
+													},
+								
+													function(data) {
+														var items = "";
+													    $.each(data, function(key) {
+													        items += '<option value="' + data[key].id + '">' + data[key].nome + '</option>';  
+													    });  
+													    $("#cidade").html(items);
+													    $('#cidade').val(cidade);  
+											    	}
+											    );	
+														
+									    	});
+										});
+								});
+								
+								$(document).ready(function() { 
+									$('#estado').change(
+										function() {
+											$.getJSON("${listaCidadesURL}", { 
+												estado : $('#estado').val(), 
+												ajax : 'true',
+												completo : 'N'
+											},
+							
+											function(data) {
+												var items = "";
+											    $.each(data, function(key) {
+											        items += '<option value="' + data[key].id + '">' + data[key].nome + '</option>';  
+											    });  
+											    $("#cidade").html(items);  
+											    $('#cidade').val('${cadastro.cidade}');
+									    	});
+										});
+								});
+							
+								nome.focus();	
+							</script>
+
+						</div>
+					</td>
+				</tr>
+			</table>
+
+	</body>
+
+</html>

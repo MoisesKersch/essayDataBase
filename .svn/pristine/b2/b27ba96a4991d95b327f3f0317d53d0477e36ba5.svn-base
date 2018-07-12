@@ -1,0 +1,61 @@
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<button type="button" name="action" class="btn btn-default" value="entrar" onclick="get('arvorebinaria');">Recomeçar</button>
+<br><br><br><br>
+<div class="center-block form">
+	<div id="treeDiv">
+		<img src="<c:url value="/resources/img/carregando.gif" />">
+	</div>
+</div>
+
+<c:url var="carregaArvoreBinariaURL" value="desenhaarvorebinaria" />
+<script type="text/javascript">
+	var myTree;
+	$(function(){
+		myTree = $("#treeDiv").btree()[0];
+	});
+	
+	function redraw(){
+		myTree.clear();
+		myTree = $("#treeDiv").btree({
+			branchColor: '#000000',
+			branchStroke: 0,
+			hSpace: 00,
+			vSpace: 150,
+			borderWidth: 0,
+			horizontal: false,
+			flip: true
+		})[0];
+	}
+
+	$(document).ready(
+		function() {
+			recarrega('${usuario}');
+	});
+	
+	function recarrega(id) {		
+		$.getJSON('${carregaArvoreBinariaURL}', {
+			ajax : 'true',
+			id: id
+		},
+		function(data) {
+			var html = '';
+			var len = data.length;
+			for (var i = 0; i < len; i++) {
+				html += '<div class="box" style="border-style: inset; cursor: pointer;" title="' + data[i].tooltip + '" onclick="recarrega(' + data[i].adUserId + ');">';
+
+				if(data[i].icone == null)
+					html += '<img src="<c:url value="/resources/img/icon-pessoa-null.png" />" alt="' + data[i].name + '" class="img-thumbnail-icon-binario">';
+				else
+					html += '<img src="' + data[i].icone + '" alt="' + data[i].name + '" class="img-thumbnail-icon-binario">';
+					
+				html+='<span class="icon-info btn-small btn-default">' + data[i].name + '</span></div>';
+			}
+			$('#treeDiv').html(html);				
+
+			redraw();
+		});
+	}
+</script>

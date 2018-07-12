@@ -1,0 +1,46 @@
+package br.com.adaptaconsultoria.amr.manager;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import br.com.adaptaconsultoria.amr.model.PacoteUpgradeLinha;
+import br.com.adaptaconsultoria.amr.model.Produto;
+import br.com.adaptaconsultoria.amr.model.RetEnvUpgrade;
+import br.com.adaptaconsultoria.amr.model.Upgrade;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.proxy.UpgradeServiceProxy;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class UpgradeManager {
+
+	public void enviaUpgrade(Upgrade upgrade, String pacoteUpgradeId) throws Exception {
+
+		List<PacoteUpgradeLinha> lista = DaoFactory.getInstance().getPacoteUpgradeLinhaDao().listaPorPacote(pacoteUpgradeId);
+		List<Produto> produtos = new ArrayList<Produto>();
+		for (int i = 0; i < lista.size(); i++) {
+			Produto produto = new Produto();
+			produto.setId(lista.get(i).getId());
+			produto.setPreco(lista.get(i).getPricelist().toString());
+			produto.setQuantidade(lista.get(i).getQuantidade().intValue());
+			produto.setSelecionado(true);
+			produtos.add(produto);
+		}
+
+		upgrade.setProdutos(produtos);
+		String xml = upgrade.toXML();
+
+		UpgradeServiceProxy proxy = new UpgradeServiceProxy();
+		RetEnvUpgrade retEnvUpgrade = proxy.doPost(xml);
+		if (!retEnvUpgrade.isSucesso()) {
+			throw new Exception(retEnvUpgrade.getDescricao());
+		}
+	}
+
+}

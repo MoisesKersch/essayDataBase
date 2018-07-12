@@ -1,0 +1,242 @@
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<jsp:include page="meusdadosmenu.jsp" />
+	
+<jsp:include page="message.jsp" />
+
+<br>
+<form:form id="formNovoCadastro" name="formNovoCadastro" class="form-horizontal" action="dadosbancarios" method="post" commandName="dados" role="form">
+	
+	<form:hidden path="cBPartnerId"/>
+	<form:hidden path="adUserId"/>
+	
+	<div class="form-group">
+   		<label for="senhaFinanceira" class="col-sm-2 control-label">Senha financeira</label>
+   		<div class="col-sm-10">
+   			<form:password class="form-control width400" path="senhaFinanceira" id="senhaFinanceira" maxlength="60" autocomplete="off"/>
+   			<form:errors path="senhaFinanceira" cssClass="tooltip-erro"/>
+   		</div>
+ 	</div>
+		
+	<div class="form-group">
+   		<label for="banco" class="col-sm-2 control-label">Banco:</label>
+   		<div class="col-sm-10">
+   			<form:select class="form-control width400" path="banco" id="banco">
+   				<option value="" selected="selected"></option>
+   				<option value="001">001   BANCO DO BRASIL</option>
+				<option value="002">002   BANCO CENTRAL DO BRASIL</option>
+				<option value="003">003   BANCO DA AMAZONIA S.A.</option>
+				<option value="004">004   BANCO DO NORDESTE DO BRASIL S.A.</option>
+				<option value="007">007   BNDES</option>
+				<option value="010">010   CC CREDICOAMO CREDITO RURAL COOPERATIVA</option>
+				<option value="011">011   CREDIT SUISSE HEDGING-GRIFFO CORRETORA DE VALORES</option>
+				<option value="013">013   SENSO CORRETORA DE CAMBIO E VALORES MOBILIARIOS SA</option>
+				<option value="014">014   NATIXIS BRASIL S.A. - BANCO MúLTIPLO</option>
+				<option value="015">015   SC UBS Brasil</option>
+				<option value="016">016   COOPERATIVA DE CRéDITO MúTUO DOS DESPACHANTES DE T</option>
+				<option value="017">017   BNY MELLON S.A.</option>
+				<option value="018">018   BM TRICURY S.A.</option>
+				<option value="019">019   BANCO AZTECA DO BRASIL S.A.</option>
+				<option value="021">021   BANESTES S.A BANCO DO ESTADO DO ESPIRITO SANTO</option>
+				<option value="025">025   BANCO ALFA S/A</option>
+				<option value="033">033   BANCO SANTANDER (BRASIL) S.A.</option>
+				<option value="036">036   BANCO BRADESCO BBI S.A</option>
+				<option value="037">037   BANCO DO ESTADO DO PARA S.A.</option>
+				<option value="040">040   BANCO CARGILL S.A</option>
+				<option value="041">041   BANCO DO ESTADO DO RIO GRANDE DO SUL S.A.</option>
+				<option value="047">047   BANCO DO ESTADO DE SERGIPE S.A.</option>
+				<option value="060">060   Confidence Corretora de Cambio S.A.</option>
+				<option value="062">062   HIPERCARD BANCO MULTIPLO S.A</option>
+				<option value="063">063   BANCO BRADESCARD S.A.</option>
+				<option value="064">064   GOLDMAN SACHS DO BRASIL-BANCO MULTIPLO S.A</option>
+				<option value="065">065   BANCO BRACCE S.A.</option>
+				<option value="066">066   BANCO MORGAN STANLEY DEAN WITTER S.A</option>
+				<option value="069">069   BPN BRASIL BANCO MULTIPLO S.A</option>
+				<option value="070">070   BRB - BANCO DE BRASILIA S.A.</option>
+				<option value="074">074   BANCO J. SAFRA S.A.</option>
+				<option value="075">075   BANCO ABN AMRO S.A.</option>
+				<option value="076">076   BANCO KDB DO BRASIL S.A</option>
+				<option value="077">077   BANCO INTERMEDIUM S.A.</option>
+				<option value="078">078   BES INVESTIMENTO DO BRASIL SA - BANCO DE INVESTIM.</option>
+				<option value="079">079   BANCO ORIGINAL DO AGRONEGOCIO S.A.</option>
+				<option value="080">080   B&amp;T ASSOCIADOS CORRETORA DE CAMBIO LTDA.</option>
+				<option value="081">081   BBN BANCO BRASILEIRO DE NEGOCIOS S.A</option>
+				<option value="082">082   BANCO TOPAZIO S.A.</option>
+				<option value="083">083   BANCO DA CHINA BRASIL S.A.</option>
+				<option value="084">084   CC UNIPRIME NORTE DO PARANA</option>
+				<option value="085">085   COOPERATIVA CENTRAL DE CREDITO URBANO - CECRED</option>
+				<option value="087">087   UNICRED CENTRAL SANTA CATARINA</option>
+				<option value="088">088   BANCO RANDON S.A.</option>
+				<option value="089">089   COOPERATIVA DE CREDITO RURAL DA REGIAO DA MOGIANA</option>
+				<option value="090">090   COOPERATIVA CENTRAL DE CREDITO DO ESTADO DE SP</option>
+				<option value="091">091   UNICRED CENTRAL RS - CENTRAL DE COOP ECON CRED MUT</option>
+				<option value="092">092   BRICKELL S A CREDITO, FINANCIAMENTO E INVESTIMENTO</option>
+				<option value="093">093   POLOCRED SOC CRED MICROEMP LTDA</option>
+				<option value="094">094   BANCO PETRA S.A.</option>
+				<option value="095">095   BANCO CONFIDENCE DE CAMBIO S.A.</option>
+				<option value="096">096   Banco BMFBovespa</option>
+				<option value="097">097   COOPERATIVA CENTRAL DE CREDITO NOROESTE BRASILEIRO</option>
+				<option value="098">098   CREDIALIANCA COOPERATIVA DE CREDITO RURAL</option>
+				<option value="099">099   UNIPRIME CENTRAL - CENTRAL INT DE COOP DE CRED LTD</option>
+				<option value="100">100   PLANNER CORRETORA DE VALORES S A</option>
+				<option value="101">101   RENASCENCA DISTR TIT E VALORES MOBILIARIOS LTDA</option>
+				<option value="102">102   XP INVEST CORRETORA DE CAMBIO TIT E VALORES MOB SA</option>
+				<option value="104">104   CAIXA ECONOMICA FEDERAL</option>
+				<option value="105">105   LECCA CREDITO FINANCIAMENTO E INVESTIMENTO S.A.</option>
+				<option value="107">107   BANCO BBM S.A</option>
+				<option value="108">108   PORTOCRED S A CREDITO FINANCIAMENTO E INVESTIMENTO</option>
+				<option value="111">111   OLIVEIRA TRUST DISTRIBUIDORA TITULOS VALORES MOBIL</option>
+				<option value="112">112   CC UNICRED BRASIL CENTRAL</option>
+				<option value="113">113   MAGLIANO S.A CORRETORA CAMBIO E VALORES MOBILIARIO</option>
+				<option value="114">114   CECOOPES-CENTRAL DAS COOP DE ECON E CRED MUTUO DO</option>
+				<option value="117">117   ADVANCED CORRETORA DE CAMBIO LTDA</option>
+				<option value="118">118   STANDARD CHARTERED BANK BRASIL S.A. - BANCO DE INV</option>
+				<option value="119">119   BANCO WESTERN UNION DO BRASIL S.A.</option>
+				<option value="120">120   BANCO RODOBENS S.A</option>
+				<option value="121">121   BANCO GERADOR S.A.</option>
+				<option value="122">122   Bradesco BERJ</option>
+				<option value="123">123   AGIPLAN FINANCEIRA S.A. CRéDITO, FINANCIAMENTO E I</option>
+				<option value="124">124   BANCO WOORI BANK DO BRASIL S.A</option>
+				<option value="125">125   BRASIL PLURAL S.A. BANCO MULTIPLO</option>
+				<option value="126">126   BR PARTNERS BANCO DE INVESTIMENTO S.A.</option>
+				<option value="127">127   CODEPE - CORRETORA DE VALORES S.A.</option>
+				<option value="129">129   BI UBS Brasil</option>
+				<option value="130">130   CARUANA S.A. SOCIEDADE DE CRéDITO FINANCIAMENTO E</option>
+				<option value="131">131   SC Tullett Prebon</option>
+				<option value="132">132   ICBC DO BRASIL BANCO MúLTIPLO S.A.</option>
+				<option value="134">134   DTVM BGC Liquidez</option>
+				<option value="136">136   CC Unicred do Brasil</option>
+				<option value="137">137   SC Multimoney</option>
+				<option value="138">138   TURMALINA CORRETORA DE CAMBIO S.A.</option>
+				<option value="184">184   BANCO ITAU BBA S.A</option>
+				<option value="204">204   BANCO BRADESCO CARTOES S.A.</option>
+				<option value="208">208   BANCO BTG PACTUAL S.A.</option>
+				<option value="212">212   BANCO ORIGINAL S.A.</option>
+				<option value="213">213   BANCO ARBI S.A.</option>
+				<option value="217">217   BANCO JOHN DEERE S.A.</option>
+				<option value="218">218   BANCO BONSUCESSO S.A.</option>
+				<option value="222">222   BANCO CREDIT AGRICOLE BRASIL S.A.</option>
+				<option value="224">224   BANCO FIBRA S.A.</option>
+				<option value="230">230   UNICARD BANCO MULTIPLO S.A</option>
+				<option value="233">233   BANCO CIFRA S.A.</option>
+				<option value="237">237   BANCO BRADESCO S.A.</option>
+				<option value="241">241   BANCO CLASSICO S.A.</option>
+				<option value="243">243   BANCO MAXIMA S.A.</option>
+				<option value="246">246   BANCO ABC BRASIL S.A.</option>
+				<option value="248">248   BANCO BOA VISTA INTERATLANTICO S.A</option>
+				<option value="249">249   BANCO INVESTCRED UNIBANCO S.A</option>
+				<option value="250">250   BCV - BANCO DE CREDITO E VAREJO S.A</option>
+				<option value="254">254   PARANA BANCO S.A.</option>
+				<option value="263">263   BANCO CACIQUE S.A.</option>
+				<option value="265">265   BANCO FATOR S.A.</option>
+				<option value="266">266   BANCO CEDULA S.A.</option>
+				<option value="300">300   BANCO DE LA NACION ARGENTINA</option>
+				<option value="318">318   BANCO BMG S.A.</option>
+				<option value="320">320   BANCO INDUSTRIAL E COMERCIAL S.A.</option>
+				<option value="341">341   ITAU UNIBANCO S.A.</option>
+				<option value="366">366   BANCO SOCIETE GENERALE BRASIL S.A</option>
+				<option value="370">370   BANCO MIZUHO DO BRASIL S.A.</option>
+				<option value="376">376   BANCO J.P. MORGAN S.A.</option>
+				<option value="389">389   BANCO MERCANTIL DO BRASIL S.A.</option>
+				<option value="394">394   BANCO BRADESCO FINANCIAMENTOS S.A.</option>
+				<option value="399">399   HSBC BANK BRASIL S.A.-BANCO MULTIPLO</option>
+				<option value="412">412   BANCO CAPITAL S.A.</option>
+				<option value="422">422   BANCO SAFRA S.A.</option>
+				<option value="456">456   BANCO DE TOKYO MITSUBISHI UFJ BRASIL S.A</option>
+				<option value="464">464   BANCO SUMITOMO MITSUI BRASILEIRO S.A.</option>
+				<option value="473">473   BANCO CAIXA GERAL - BRASIL S.A.</option>
+				<option value="477">477   CITIBANK N.A.</option>
+				<option value="487">487   DEUTSCHE BANK S. A. - BANCO ALEMAO</option>
+				<option value="488">488   JPMORGAN CHASE BANK</option>
+				<option value="492">492   ING BANK N.V.</option>
+				<option value="494">494   BANCO DE LA REPUBLICA ORIENTAL DEL URUGUAY</option>
+				<option value="495">495   BANCO DE LA PROVINCIA DE BUENOS AIRES</option>
+				<option value="505">505   BANCO CREDIT SUISSE (BRASIL) S.A.</option>
+				<option value="600">600   BANCO LUSO BRASILEIRO S.A.</option>
+				<option value="604">604   BANCO INDUSTRIAL DO BRASIL S. A.</option>
+				<option value="610">610   BANCO VR S.A.</option>
+				<option value="611">611   BANCO PAULISTA S.A.</option>
+				<option value="612">612   BANCO GUANABARA S.A.</option>
+				<option value="613">613   BANCO PECUNIA S.A.</option>
+				<option value="623">623   BANCO PAN S.A.</option>
+				<option value="626">626   BANCO FICSA S.A.</option>
+				<option value="630">630   Intercap</option>
+				<option value="633">633   BANCO RENDIMENTO S.A.</option>
+				<option value="634">634   BANCO TRIANGULO S.A.</option>
+				<option value="637">637   BANCO SOFISA S.A.</option>
+				<option value="643">643   BANCO PINE S.A.</option>
+				<option value="652">652   BANCO ITAU HOLDING FINANCEIRA S.A</option>
+				<option value="653">653   BANCO INDUSVAL S.A.</option>
+				<option value="654">654   BANCO A.J. RENNER S.A.</option>
+				<option value="655">655   BANCO VOTORANTIM S.A.</option>
+				<option value="707">707   BANCO DAYCOVAL S.A.</option>
+				<option value="712">712   BM Ourinvest</option>
+				<option value="719">719   BANIF-BANCO INTERNACIONAL DO FUNCHAL (BRASIL) S.A</option>
+				<option value="735">735   BANCO POTTENCIAL S.A.</option>
+				<option value="739">739   BANCO CETELEM S.A.</option>
+				<option value="740">740   BANCO BARCLAYS S.A.</option>
+				<option value="741">741   BANCO RIBEIRAO PRETO S.A.</option>
+				<option value="743">743   BANCO SEMEAR S.A.</option>
+				<option value="745">745   BANCO CITIBANK S.A.</option>
+				<option value="746">746   BANCO MODAL S.A.</option>
+				<option value="747">747   BANCO RABOBANK INTERNATIONAL BRASIL S.A.</option>
+				<option value="748">748   BANCO COOPERATIVO SICREDI S.A.</option>
+				<option value="751">751   SCOTIABANK BRASIL S.A BANCO MULTIPLO</option>
+				<option value="752">752   BANCO BNP PARIBAS BRASIL S.A</option>
+				<option value="753">753   Novo Banco Continental</option>
+				<option value="755">755   BANK OF AMERICA MERRILL LYNCH BANCO MULTIPLO S.A.</option>
+				<option value="756">756   BANCO COOPERATIVO DO BRASIL S.A.</option>
+				<option value="757">757   BANCO KEB DO BRASIL S.A.</option>
+				<option value="901">901   CORRETORA SOUZA BARROS CAMBIO E TITULOS S.A.</option>
+				<option value="991">991   BBBIRO</option>
+				<option value="992">992   ABBI</option>
+				<option value="993">993   BUREAU BCN</option>
+				<option value="994">994   BUREAU NACIONAL</option>
+				<option value="995">995   BUREAU ABBC</option>
+				<option value="996">996   BUREAU FEBRABAN</option>
+				<option value="997">997   ASSOCIACAO DE BANCOS ESTADUAIS</option>
+   			</form:select>
+   			<form:errors path="banco" cssClass="tooltip-erro"/>
+   		</div>
+ 		</div>
+ 		
+ 		<div class="form-group">
+   		<label for="agencia" class="col-sm-2 control-label">Agência:</label>
+   		<div class="col-sm-10">
+			<form:input class="form-control width400" path="agencia" id="agencia" maxlength="10"/>
+   			<form:errors path="agencia" cssClass="tooltip-erro"/>
+   		</div>
+ 		</div>
+ 		
+ 		<div class="form-group">
+   		<label for="conta" class="col-sm-2 control-label">Conta:</label>
+   		<div class="col-sm-10">
+			<form:input class="form-control width200" path="conta" id="conta" maxlength="10"/>
+   			<form:errors path="conta" cssClass="tooltip-erro"/>
+   		</div>
+   	</div>
+   	
+   	<div class="form-group">
+   		<label for="contaDV" class="col-sm-2 control-label">DV:</label>
+   		<div class="col-sm-10">
+   			<form:input class="form-control width50" path="contaDV" id="contaDV" maxlength="2"/>
+   			<form:errors path="contaDV" cssClass="tooltip-erro"/>
+   		</div>
+ 	</div>
+ 		
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-10  text-center">
+			<a href="#" class="btn btn-primary" onclick="post('dadosbancarios', $('#formNovoCadastro').serialize());">
+				<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+				Salvar
+			</a>
+		</div>
+	</div>
+			
+</form:form>
+
+<script>
+	$('#banco').val('${dados.banco}');
+	$('#senhaFinanceira').focus();
+</script>

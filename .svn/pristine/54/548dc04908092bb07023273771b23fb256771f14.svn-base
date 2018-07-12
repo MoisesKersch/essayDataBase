@@ -1,0 +1,278 @@
+package br.com.adaptaconsultoria.amr.test.adesao;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import br.com.adaptaconsultoria.amr.manager.AdesaoManager;
+import br.com.adaptaconsultoria.amr.manager.PagamentoManager;
+import br.com.adaptaconsultoria.amr.manager.UsuarioManager;
+import br.com.adaptaconsultoria.amr.model.Cadastro;
+import br.com.adaptaconsultoria.amr.model.CadastroPendente;
+import br.com.adaptaconsultoria.amr.model.PagamentoPendente;
+import br.com.adaptaconsultoria.amr.model.ParceiroNegocios;
+import br.com.adaptaconsultoria.amr.model.Produto;
+import br.com.adaptaconsultoria.amr.model.Usuario;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.util.io.FileUtil;
+import br.com.adaptaconsultoria.amr.util.lang.TextoUtil;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class AdesaoDataSet {
+
+	public static final String EMPRESA_LOGIN = "NTB01";
+
+	public void criaArquivoDataSetPadrao() throws Exception {
+		String diretorio = new File("").getAbsolutePath() + "/res/dataset/";
+
+		int patrocinador = 0;
+		List<String> patrocinadores = new ArrayList<String>();
+		patrocinadores.add(EMPRESA_LOGIN);
+
+		boolean esquerda = true;
+
+		Random random = new Random();
+		List<String> sobrenomes = FileUtil.toStringListWithEncode(diretorio + "dataset-sobrenomes.txt");
+		List<String> enderecos = FileUtil.toStringListWithEncode(diretorio + "dataset-enderecos.txt");
+		List<String> cpfs = FileUtil.toStringList(diretorio + "dataset-cpf.txt");
+
+		List<String> nomesMasculinos = FileUtil.toStringListWithEncode(diretorio + "dataset-nomes-masculinos.txt");
+		String arquivo = "";
+		for (int i = 0; i < nomesMasculinos.size(); i++) {
+			String nome = nomesMasculinos.get(i) + " " + sobrenomes.get(random.nextInt(sobrenomes.size()));
+			String login = TextoUtil.removeAcentos(nomesMasculinos.get(i).toUpperCase());
+
+			// patrocinador
+			String linha = patrocinadores.get(patrocinador);
+			// nome
+			linha += ";" + nome;
+			// cpfCnpj
+			linha += ";" + cpfs.get(i);
+			// dataNascimento
+			linha += ";01/01/1990";
+			// genero
+			linha += ";M";
+			// email
+			linha += ";" + login.toLowerCase() + "@adaptateste.com.br";
+			// usuario
+			linha += ";" + login;
+
+			// cep;rua;numero;bairro;cidade;regiao
+			linha += ";" + enderecos.get(random.nextInt(enderecos.size()));
+
+			// Produtos
+			linha += ";2";
+
+			// Esquerda ou direita
+			linha += ";" + (esquerda ? "E" : "D");
+
+			patrocinadores.add(login);
+			if (!esquerda)
+				patrocinador++;
+
+			esquerda = !esquerda;
+
+			arquivo += "\n" + linha;
+		}
+
+		int cnpjIndex = nomesMasculinos.size() + 1;
+		List<String> nomesFemininos = FileUtil.toStringListWithEncode(diretorio + "dataset-nomes-femininos.txt");
+		for (int i = 0; i < nomesFemininos.size(); i++) {
+			String nome = nomesFemininos.get(i) + " " + sobrenomes.get(random.nextInt(sobrenomes.size()));
+			String login = TextoUtil.removeAcentos(nomesFemininos.get(i).toUpperCase());
+
+			// patrocinador
+			String linha = patrocinadores.get(patrocinador);
+			// nome
+			linha += ";" + nome;
+			// cpfCnpj
+			linha += ";" + cpfs.get(i + cnpjIndex);
+			// dataNascimento
+			linha += ";01/01/1990";
+			// genero
+			linha += ";F";
+			// email
+			linha += ";" + login.toLowerCase() + "@adaptateste.com.br";
+			// usuario
+			linha += ";" + login;
+
+			// cep;rua;numero;bairro;cidade;regiao
+			linha += ";" + enderecos.get(random.nextInt(enderecos.size()));
+
+			// Produtos
+			linha += ";2";
+
+			// Esquerda ou direita
+			linha += ";" + (esquerda ? "E" : "D");
+
+			patrocinadores.add(login);
+			if (!esquerda)
+				patrocinador++;
+
+			esquerda = !esquerda;
+
+			arquivo += "\n" + linha;
+		}
+
+		FileUtil.save(arquivo.replaceFirst("\n", ""), diretorio + "dataset-adesao.txt");
+
+	}
+
+	private void adicionaAdesoes() throws Exception {
+
+		Usuario patrocinador = DaoFactory.getInstance().getUsuarioDao().carregaPorLogin(EMPRESA_LOGIN);
+
+		String diretorio = new File("").getAbsolutePath() + "/res/dataset/";
+
+		AdesaoManager manager = new AdesaoManager();
+		List<Produto> produtos = manager.listaProdutosDisponiveis();
+
+		List<String> adesoes = FileUtil.toStringListWithEncode(diretorio + "dataset-adesao.txt");
+		String ultimoCrescimento = "D";
+		for (int i = 0; i < adesoes.size(); i++) {
+			try {
+				String[] dado = adesoes.get(i).split(";");
+
+				if (dado[0].equalsIgnoreCase("COSTA"))
+					System.out.println("aqui");
+
+				System.out.println("PATROCINADOR: " + dado[0] + "    Estado: " + dado[12] + "    Login: " + dado[6]);
+
+				Cadastro cadastro = new Cadastro();
+				cadastro.setPatrocinador(dado[0]);
+				cadastro.setNome(dado[1]);
+				cadastro.setCpfCnpj(dado[2]);
+				cadastro.setDataNascimento(dado[3]);
+				cadastro.setGenero(dado[4]);
+				cadastro.setEmail(dado[5]);
+				cadastro.setUsuario(dado[6]);
+				cadastro.setSenha("123");
+				cadastro.setCep(dado[7]);
+				cadastro.setRua(dado[8]);
+				try {
+					cadastro.setNumero(String.valueOf(Integer.parseInt(dado[9].trim())));
+				} catch (Exception e) {
+					cadastro.setNumero("10");
+				}
+				cadastro.setBairro(dado[10]);
+				if (dado[11].equalsIgnoreCase("FAEAF05D03964AABB17585FF7C15CE53"))
+					cadastro.setCidade("39609246D204473AAF8C0FD91D435612");
+				else
+					cadastro.setCidade(dado[11]);
+				cadastro.setEstado(dado[12]);
+
+				cadastro.setTipoTelefone1("Celular");
+				cadastro.setDddTelefone1("49");
+				cadastro.setNumeroTelefone1("8888-8888");
+
+				List<Produto> compras = new ArrayList<Produto>();
+				String[] produto = dado[13].split(",");
+				for (int j = 0; j < produto.length; j++) {
+					Produto p = new Produto();
+					Produto ps = produtos.get(Integer.parseInt(produto[j]));
+					p.setId(ps.getId());
+					p.setCodigo(ps.getCodigo());
+					p.setNome(ps.getNome());
+					p.setSelecionado(true);
+					compras.add(p);
+				}
+				cadastro.setProdutos(compras);
+
+				manager.enviaAdesao(cadastro);
+
+				// Atualiza regra de crescimento
+				String crescimento = dado[14];
+				System.out.println(crescimento);
+
+				Usuario patrocinador2 = DaoFactory.getInstance().getUsuarioDao().carregaPorLogin(cadastro.getPatrocinador());
+				List<CadastroPendente> cadastrosPendentes = DaoFactory.getInstance().getCadastroPendenteDao().carregaPorUsuario(patrocinador2.getId());
+				UsuarioManager usuarioManager = new UsuarioManager();
+				String direto = null;
+				while (cadastrosPendentes == null || cadastrosPendentes.isEmpty()) {
+					System.out.println("TENTANDO");
+					cadastrosPendentes = DaoFactory.getInstance().getCadastroPendenteDao().carregaPorUsuario(patrocinador2.getId());
+				}
+
+				for (int j = 0; j < cadastrosPendentes.size(); j++) {
+
+					while (true) {
+						direto = cadastrosPendentes.get(j).getDireto();
+						cadastro = usuarioManager.criaCadastroDeParceiroDeNegocios(direto, false, patrocinador2.getId());
+						cadastro.setCrescimento(crescimento);
+						usuarioManager.salvaCadastroPendente(cadastro);
+
+						try {
+							cadastro = usuarioManager.criaCadastroDeParceiroDeNegocios(direto, false, patrocinador2.getId());
+							ultimoCrescimento = cadastro.getCrescimento();
+
+							if (ultimoCrescimento == null || crescimento == null || !ultimoCrescimento.equalsIgnoreCase(crescimento)) {
+								System.out.println("OPS! Erro de crescimento, não foi atualizado.");
+							}
+
+							else
+								break;
+
+						} catch (Exception e) {
+							System.out.println(e.getMessage());
+						}
+					}
+				}
+
+				// Paga o cadastro
+				List<PagamentoPendente> pagamentosPendentes = DaoFactory.getInstance().getPagamentoPendenteDao().carregaPorUsuario(patrocinador.getId());
+				PagamentoManager pagamentoManager = new PagamentoManager();
+				for (int j = 0; j < pagamentosPendentes.size(); j++) {
+					ParceiroNegocios pn = DaoFactory.getInstance().getParceiroNegociosDao().carregaPorId(direto);
+					String perfil = pn.getPerfil();
+					pagamentoManager.pagaTitulo(patrocinador.getId(), pagamentosPendentes.get(j).getcDebtPaymentId(), "123");
+					while (true) {
+						try {
+							pn = DaoFactory.getInstance().getParceiroNegociosDao().carregaPorId(direto);
+							if (!perfil.trim().equalsIgnoreCase(pn.getPerfil().trim()))
+								break;
+							else
+								System.out.println("Perfil: '" + perfil + "' = '" + pn.getPerfil() + "'");
+						} catch (Exception e) {
+							System.out.println(e.getMessage());
+						}
+					}
+				}
+
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				if (!e.getMessage().equalsIgnoreCase("duplicar valor da chave viola a restrição de unicidade \"ad_user_un_username\""))
+					throw e;
+			}
+
+		}
+	}
+
+	public static void main(String[] args) throws Exception {
+		AdesaoDataSet dataSet = new AdesaoDataSet();
+		dataSet.adicionaAdesoes();
+
+		// dataSet.criaArquivoDataSetPadrao();
+
+		/*
+		 * String crescimento = "E"; Cadastro cadastro = null; List<CadastroPendente> cadastrosPendentes =
+		 * DaoFactory.getInstance().getCadastroPendenteDao().carregaPorUsuario("3C03803E7BD24AE3AE2914FA066806A9"); UsuarioManager usuarioManager = new UsuarioManager(); for (int j
+		 * = 0; j < cadastrosPendentes.size(); j++) { cadastro = usuarioManager.criaCadastroDeParceiroDeNegocios("5CA856DBBD38416884B5DF091870D9B4", false,
+		 * "3C03803E7BD24AE3AE2914FA066806A9"); cadastro.setCrescimento(crescimento); usuarioManager.salvaCadastroPendente(cadastro); }
+		 *
+		 * // Paga o cadastro List<PagamentoPendente> pagamentosPendentes =
+		 * DaoFactory.getInstance().getPagamentoPendenteDao().carregaPorUsuario("06125A45A00A4777897B746547A5BE65"); PagamentoManager pagamentoManager = new PagamentoManager(); for
+		 * (int j = 0; j < pagamentosPendentes.size(); j++) { pagamentoManager.pagaTitulo("06125A45A00A4777897B746547A5BE65", pagamentosPendentes.get(j).getcDebtPaymentId(),
+		 * "123"); }
+		 */
+
+	}
+
+}

@@ -1,0 +1,124 @@
+package br.com.adaptaconsultoria.amr.model;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@SuppressWarnings("serial")
+@Entity
+@Table(name = "ad_user")
+public class Usuario implements Serializable {
+
+	@Id
+	@Column(name = "ad_user_id")
+	private String id;
+	@Column(name = "username")
+	private String login;
+	@Column(name = "password")
+	private String senha;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "c_bpartner_id")
+	private ParceiroNegocios parceiroNegocios;
+	@Column(name = "em_amr_senhafinanceira")
+	private String senhaFinanceira;
+	@Column(name = "em_amr_crescimento")
+	private String crescimento;
+	@Column(name = "firstname")
+	private String primeiroNome;
+	@Column(name = "lastname")
+	private String sobreNome;
+	@Column(name = "name")
+	private String nome;
+
+	public Usuario() {
+		super();
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+	public ParceiroNegocios getParceiroNegocios() {
+		return parceiroNegocios;
+	}
+
+	public void setParceiroNegocios(ParceiroNegocios parceiroNegocios) {
+		this.parceiroNegocios = parceiroNegocios;
+	}
+
+	public String getSenhaFinanceira() {
+		return senhaFinanceira;
+	}
+
+	public void setSenhaFinanceira(String senhaFinanceira) {
+		this.senhaFinanceira = senhaFinanceira;
+	}
+
+	public String getCrescimento() {
+		return crescimento;
+	}
+
+	public void setCrescimento(String crescimento) {
+		this.crescimento = crescimento;
+	}
+
+	public String getPrimeiroNome() {
+		return primeiroNome;
+	}
+
+	public void setPrimeiroNome(String primeiroNome) {
+		this.primeiroNome = primeiroNome;
+	}
+
+	public String getSobreNome() {
+		return sobreNome;
+	}
+
+	public void setSobreNome(String sobreNome) {
+		this.sobreNome = sobreNome;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+		if (nome != null && !nome.isEmpty()) {
+			if (!nome.contains(" ")) {
+				this.primeiroNome = nome;
+			} else {
+				int index = nome.indexOf(" ");
+				this.primeiroNome = nome.substring(0, index).trim();
+				this.sobreNome = nome.substring(index, nome.length()).trim();
+			}
+		}
+	}
+
+}

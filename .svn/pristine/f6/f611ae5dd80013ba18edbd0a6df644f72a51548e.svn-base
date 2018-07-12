@@ -1,0 +1,11 @@
+(function ($) {
+
+	$(window).scroll(function() {
+		if ($("#divHeader").offset().top > 50) {
+			$("#divFooter").addClass("active");
+		} else {
+			$("#divFooter").removeClass("active");
+		}
+	});
+
+})(jQuery);

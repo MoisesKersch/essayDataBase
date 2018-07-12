@@ -1,0 +1,11 @@
+package br.com.adaptaconsultoria.amr;
+
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+
+public class Main {
+
+	public static void main(String[] args) throws Exception {
+		System.out.println(DaoFactory.getInstance().getVoucherProdutoDao().listaOfertasPorEmpresa("FEEBE119B73A4F2DB08A099CB29C01FB"));
+	}
+
+}

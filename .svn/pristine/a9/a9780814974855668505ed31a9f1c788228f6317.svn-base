@@ -1,0 +1,116 @@
+package br.com.adaptaconsultoria.amr.springmvc.controller;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import br.com.adaptaconsultoria.amr.manager.UsuarioManager;
+import br.com.adaptaconsultoria.amr.model.Login;
+import br.com.adaptaconsultoria.amr.model.Mural;
+import br.com.adaptaconsultoria.amr.model.Usuario;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.springmvc.util.MessageUtil;
+import br.com.adaptaconsultoria.amr.springmvc.util.SessionUtil;
+
+/**
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+@Controller
+@Scope("session")
+public class LoginController {
+
+	@RequestMapping(value = "/inicio", method = GET)
+	public ModelAndView inicio(HttpSession session, RedirectAttributes redirectAttributes) {
+		SessionUtil.setMenuAtivo(session, "mural");
+		SessionUtil.setSubMenuAtivo(session, "mural");
+		List<Mural> lista = new ArrayList<Mural>();
+		try {
+			lista = DaoFactory.getInstance().getMuralDao().carregaPorUsuario(SessionUtil.getUsuarioId(session));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		ModelAndView model = new ModelAndView("mural", "lista", lista);
+		return model;
+	}
+
+	@RequestMapping(value = "/logout", method = GET)
+	public String logout(HttpSession session) {
+		try {
+			SessionUtil.logout(session);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "redirect:inicio";
+	}
+
+	@RequestMapping(value = "/login", method = GET)
+	public ModelAndView login(HttpSession session) {
+		ModelAndView model = new ModelAndView("login", "login", new Login());
+		return model;
+	}
+
+	@RequestMapping(value = "/login", method = POST)
+	public String login(@Valid final Login login, BindingResult result, RedirectAttributes redirectAttributes, HttpSession session, HttpServletRequest request) {
+		try {
+
+			if (result.hasErrors()) {
+				return "login";
+			}
+
+			UsuarioManager manager = new UsuarioManager();
+			Usuario usuario = manager.login(login.getLogin(), login.getSenha());
+			SessionUtil.setUsuarioId(session, usuario);
+
+			return "redirect:inicio";
+		} catch (Exception e) {
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+			return "redirect:login";
+		}
+	}
+
+	@RequestMapping(value = "/esqueciminhasenha", method = GET)
+	public ModelAndView esqueciMinhaSenha(HttpSession session) {
+		Login login = new Login();
+		login.setSenha("2341234%#$%#@%$@");
+		ModelAndView model = new ModelAndView("esqueciminhasenha", "login", login);
+		return model;
+	}
+
+	@RequestMapping(value = "/esqueciminhasenha", method = POST)
+	public String enviaEmailURLRedefinicaoDeSenha(@Valid final Login login, BindingResult result, RedirectAttributes redirectAttributes, HttpSession session,
+			HttpServletRequest request) {
+		try {
+
+			if (result.hasErrors()) {
+				return "esqueciminhasenha";
+			}
+
+			UsuarioManager manager = new UsuarioManager();
+			manager.redefineSenhaEEnviaPorEMail(login.getLogin());
+
+			MessageUtil.sucesso(redirectAttributes, "Sucesso!", "Um e-mail com sua nova senha foi enviado para: " + login.getLogin());
+			return "redirect:login";
+		} catch (Exception e) {
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+			return "redirect:esqueciminhasenha";
+		}
+	}
+
+}

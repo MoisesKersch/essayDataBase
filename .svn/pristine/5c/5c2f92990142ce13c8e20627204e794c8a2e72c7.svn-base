@@ -1,0 +1,5 @@
+Foi solicitada uma redefinição de senha no sistema.
+<h2>Dados de acesso</h2>
+Login: <b>$login</b>
+<br>
+Senha: <b>$senha</b>

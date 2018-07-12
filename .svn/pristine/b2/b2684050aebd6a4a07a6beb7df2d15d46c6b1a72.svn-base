@@ -1,0 +1,27 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<div class="container-fluid">
+	<ul class="nav nav-tabs nav-bar-submenu">
+		<li class="<c:if test="${submenu == 'saldoresumido'}">active</c:if>"><a href="#" onclick="get('saldoresumido');">Saldo resumido</a></li>
+		<li class="<c:if test="${submenu == 'pagamentospendentes'}">active</c:if>"><a href="#" onclick="get('pagamentospendentes');">Pagamentos pendentes</a></li>
+		<li class="<c:if test="${submenu == 'extratoperiodo'}">active</c:if>"><a href="#" onclick="get('extratoperiodo');">Extrato por período</a></li>
+		<li id="menuSaque" class="<c:if test="${submenu == 'saque'}">active</c:if>"><a href="#" onclick="get('saque');">Solicitar saque</a></li>
+		<li class="<c:if test="${submenu == 'transferencia'}">active</c:if>"><a href="#" onclick="get('transferencia');">Tranferência de saldo</a></li>
+		<!-- <li class="<c:if test="${submenu == 'solicitacoessaque'}">active</c:if>"><a href="#" onclick="get('solicitacoessaque');">Solicitações de saque</a></li> -->
+	</ul>
+</div>
+<script>
+	$(document).ready(
+		function() {
+			$.get("exibemenusaque", 
+					function(resposta) {
+						if(resposta == null || resposta == "") {
+							$("#menuSaque").addClass("hidden");
+						} 
+						else {
+							$("#menuSaque").removeClass("hidden");
+						}
+			   		}
+			   	);
+		}
+	);
+</script>

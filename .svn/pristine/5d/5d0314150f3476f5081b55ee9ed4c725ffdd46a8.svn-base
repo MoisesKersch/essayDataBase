@@ -1,0 +1,75 @@
+package br.com.adaptaconsultoria.amr.springmvc.controller;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import br.com.adaptaconsultoria.amr.model.Voucher;
+import br.com.adaptaconsultoria.amr.model.VoucherProduto;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.properties.AMRProperties;
+import br.com.adaptaconsultoria.amr.springmvc.util.MessageUtil;
+import br.com.adaptaconsultoria.amr.springmvc.util.SessionUtil;
+
+/**
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+@Controller
+@Scope("request")
+public class VoucherController {
+
+	@RequestMapping(value = "/vouchers", method = GET)
+	public ModelAndView lista(HttpSession session) {
+		SessionUtil.setSubMenuAtivo(session, "vouchers");
+		List<Voucher> lista = new ArrayList<Voucher>();
+		try {
+			lista = DaoFactory.getInstance().getVoucherDao().listaDisponiveisPorUsuario(SessionUtil.getUsuarioId(session));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		ModelAndView model = new ModelAndView("vouchers", "lista", lista);
+		return model;
+	}
+
+	@RequestMapping(value = "/voucherprodutos", method = GET)
+	public ModelAndView listaProdutos(HttpSession session) {
+		SessionUtil.setMenuAtivo(session, "voucherprodutos");
+		List<VoucherProduto> lista = new ArrayList<VoucherProduto>();
+		try {
+			lista = DaoFactory.getInstance().getVoucherProdutoDao().listaOfertasPorEmpresa(AMRProperties.getInstance().getPropriedade("adclientid"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		ModelAndView model = new ModelAndView("voucherprodutos", "lista", lista);
+		return model;
+	}
+
+	@RequestMapping(value = "/compravoucher", method = GET)
+	public String compra(String id, RedirectAttributes redirectAttributes, HttpSession session, HttpServletRequest request) {
+		try {
+
+			String retorno = DaoFactory.getInstance().getVoucherProdutoDao().compraVoucher(SessionUtil.getUsuarioId(session), id);
+			MessageUtil.sucesso(redirectAttributes, "Parabéns!", retorno);
+
+			return "redirect:voucherprodutos";
+		} catch (Exception e) {
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+			return "redirect:voucherprodutos";
+		}
+	}
+
+}

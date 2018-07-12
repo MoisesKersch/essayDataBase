@@ -1,0 +1,45 @@
+package br.com.adaptaconsultoria.amr.model;
+
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class Login {
+
+	@NotNull
+	@NotEmpty(message = "{campo.obrigatorio}")
+	private String login;
+	@NotNull
+	@NotEmpty(message = "{campo.obrigatorio}")
+	private String senha;
+
+	public Login() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login != null ? login.toUpperCase() : login;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+}

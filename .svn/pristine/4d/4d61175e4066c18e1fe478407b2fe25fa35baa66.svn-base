@@ -1,0 +1,77 @@
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>	
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<jsp:include page="financeiromenu.jsp" />
+
+<br>
+<div class="center-block form">
+	
+	<jsp:include page="message.jsp" />
+	
+	<div class="row">
+		<form:form id="formTransferencia" name="formTransferencia" class="form-horizontal" action="transferencia" method="post" commandName="transferencia" role="form">
+			
+			<div class="form-group">
+	    		<label for="adUserIdCredito" class="col-sm-2 control-label">Transferência para o usuário:</label>
+	    		<div class="col-sm-10">
+					<form:input class="form-control width400" path="adUserIdCredito" id="adUserIdCredito" maxlength="60"/>
+	    			<form:errors path="adUserIdCredito" cssClass="tooltip-erro"/>
+	    			<div class="btn" id="creditoNome"></div>
+	    		</div>
+	  		</div>
+	  			  					
+	  		<div class="form-group">
+	    		<label for="nome" class="col-sm-2 control-label">Valor:</label>
+	    		<div class="col-sm-10">
+					<form:input class="form-control width400" path="valor" id="valor" maxlength="60" onkeypress="return decimal(this.value, event, 10, 2);"/>
+	    			<form:errors path="valor" cssClass="tooltip-erro"/>
+	    		</div>
+	  		</div>
+	  		
+	  		<div class="form-group">
+	    		<label for="senhaFinanceira" class="col-sm-2 control-label">Senha financeira:</label>
+	    		<div class="col-sm-10">
+	    			<form:password class="form-control width400" path="senhaFinanceira" id="senhaFinanceira" maxlength="60" autocomplete="off"/>
+	    			<form:errors path="senhaFinanceira" cssClass="tooltip-erro"/>
+	    		</div>
+	  		</div>
+	  		
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<a href="#" class="btn btn-primary" onclick="post('transferencia', $('#formTransferencia').serialize());">
+						<span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+						Completar
+					</a>
+				</div>
+			</div>
+					
+		</form:form>
+	</div>
+</div>
+
+<script>
+	$(document).ready(function() {
+		$('#adUserIdCredito').change(
+			function() {
+				$.post("validatransferenciacredito", 
+					{
+						'login' : $('#adUserIdCredito').val()
+					}, 
+	
+					function(resposta) {
+						if(resposta == null || resposta == "") {
+			    			$("#creditoNome").html('<span id="adUserIdCredito.errors" class="tooltip-erro">Usuário <i>' + $("#adUserIdCredito").val() + '</i> não encontrado</span>');
+			    			$("#adUserIdCredito").focus();
+						} 
+						else {
+							$("#creditoNome").html('');
+						}
+			   		}
+			   	);		
+			}
+		);
+	});
+	
+	$("#adUserIdCredito").focus();	
+</script>

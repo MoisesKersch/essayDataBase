@@ -1,0 +1,95 @@
+package br.com.adaptaconsultoria.amr.model;
+
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class DadosBancarios {
+
+	private String cBPartnerId;
+	private String adUserId;
+	@NotNull(message = "{campo.obrigatorio}")
+	private String banco;
+	@NotNull
+	@NotEmpty(message = "{campo.obrigatorio}")
+	private String agencia;
+	@NotNull
+	@NotEmpty(message = "{campo.obrigatorio}")
+	private String conta;
+	@NotNull
+	@NotEmpty(message = "{campo.obrigatorio}")
+	private String contaDV;
+	@NotNull
+	@NotEmpty(message = "{campo.obrigatorio}")
+	private String senhaFinanceira;
+
+	public DadosBancarios() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public String getcBPartnerId() {
+		return cBPartnerId;
+	}
+
+	public void setcBPartnerId(String cBPartnerId) {
+		this.cBPartnerId = cBPartnerId;
+	}
+
+	public String getAdUserId() {
+		return adUserId;
+	}
+
+	public void setAdUserId(String adUserId) {
+		this.adUserId = adUserId;
+	}
+
+	public String getBanco() {
+		return banco;
+	}
+
+	public void setBanco(String banco) {
+		this.banco = banco;
+	}
+
+	public String getAgencia() {
+		return agencia;
+	}
+
+	public void setAgencia(String agencia) {
+		this.agencia = agencia;
+	}
+
+	public String getConta() {
+		return conta;
+	}
+
+	public void setConta(String conta) {
+		this.conta = conta;
+	}
+
+	public String getContaDV() {
+		return contaDV;
+	}
+
+	public void setContaDV(String contaDV) {
+		this.contaDV = contaDV;
+	}
+
+	public String getSenhaFinanceira() {
+		return senhaFinanceira;
+	}
+
+	public void setSenhaFinanceira(String senhaFinanceira) {
+		this.senhaFinanceira = senhaFinanceira;
+	}
+
+}

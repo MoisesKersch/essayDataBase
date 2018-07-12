@@ -1,0 +1,330 @@
+package br.com.adaptaconsultoria.amr.springmvc.controller;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import br.com.adaptaconsultoria.amr.loader.CidadeLoader;
+import br.com.adaptaconsultoria.amr.manager.AdesaoManager;
+import br.com.adaptaconsultoria.amr.model.Cadastro;
+import br.com.adaptaconsultoria.amr.model.Cidade;
+import br.com.adaptaconsultoria.amr.model.Estado;
+import br.com.adaptaconsultoria.amr.model.Pais;
+import br.com.adaptaconsultoria.amr.model.Produto;
+import br.com.adaptaconsultoria.amr.model.Usuario;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.proxy.BuscaCEPKingHostProxy;
+import br.com.adaptaconsultoria.amr.springmvc.util.MessageUtil;
+import br.com.adaptaconsultoria.amr.springmvc.util.SessionUtil;
+
+/**
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+@Controller
+@Scope("session")
+public class AdesaoController {
+
+	private Cadastro cadastro;
+	private List<Produto> produtos;
+
+	@RequestMapping(value = "/adesao", method = GET)
+	public ModelAndView novo() {
+
+		this.produtos = null;
+
+		if (cadastro == null) {
+			cadastro = new Cadastro();
+		}
+
+		ModelAndView model = new ModelAndView("adesao", "cadastro", cadastro);
+		return model;
+	}
+
+	@RequestMapping(value = "/novaadesao", method = GET)
+	public ModelAndView novaAdesaoPatrocinada(String login) {
+
+		this.produtos = null;
+
+		cadastro = new Cadastro();
+
+		Usuario user;
+		ModelAndView model = null;
+		try {
+			user = DaoFactory.getInstance().getUsuarioDao().carregaPorLogin(login);
+			if (user != null) {
+				cadastro.setPatrocinador(user.getLogin());
+				model = new ModelAndView("novaadesao", "cadastro", cadastro);
+			}
+		} catch (Exception e) {
+			model = new ModelAndView("adesao", "cadastro", cadastro);
+			e.printStackTrace();
+		}
+
+		return model;
+	}
+
+	@RequestMapping(value = "/novaadesao_novo", method = POST)
+	public String novaAdesaoPatrocinada(@Valid final Cadastro cadastro, BindingResult result, RedirectAttributes redirectAttributes, HttpSession session,
+			HttpServletRequest request) {
+		try {
+
+			try {
+				atualizaProdutos(request);
+			} catch (Exception e) {
+				throw new Exception("Serviço web para listar os produtos não esta acessivel: " + e.getMessage());
+			}
+
+			if (result.hasErrors()) {
+				return "novaadesao";
+			}
+
+			AdesaoManager manager = new AdesaoManager();
+			cadastro.setProdutos(this.produtos);
+			manager.enviaAdesao(cadastro);
+			MessageUtil.sucesso(redirectAttributes, "Parabéns!", "Adesão efetuada com sucesso");
+
+			this.produtos = null;
+			return "redirect:login";
+		} catch (Exception e) {
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+			this.cadastro = cadastro;
+			return "redirect:adesao";
+		}
+	}
+
+	@RequestMapping(value = "/adesao_novo", method = POST)
+	public String novo(@Valid final Cadastro cadastro, BindingResult result, RedirectAttributes redirectAttributes, HttpSession session,
+			HttpServletRequest request) {
+		try {
+
+			try {
+				atualizaProdutos(request);
+			} catch (Exception e) {
+				throw new Exception("Serviço web para listar os produtos não esta acessivel: " + e.getMessage());
+			}
+
+			if (result.hasErrors()) {
+				return "adesao";
+			}
+
+			AdesaoManager manager = new AdesaoManager();
+			cadastro.setProdutos(this.produtos);
+			manager.enviaAdesao(cadastro);
+			MessageUtil.sucesso(redirectAttributes, "Parabéns!", "Adesão efetuada com sucesso");
+
+			this.produtos = null;
+			return "redirect:login";
+		} catch (Exception e) {
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+			this.cadastro = cadastro;
+			return "redirect:adesao";
+		}
+	}
+
+	private void atualizaProdutos(HttpServletRequest request) throws Exception {
+		if (this.produtos == null)
+			this.produtos = listaProdutos();
+
+		for (int i = 0; i < this.produtos.size(); i++) {
+			String selecionado = request.getParameter("inpSelecionado" + this.produtos.get(i).getCodigo());
+			this.produtos.get(i).setSelecionado(selecionado != null && !selecionado.isEmpty() && !selecionado.equalsIgnoreCase("null"));
+		}
+	}
+
+	@RequestMapping(value = "/lista_paises", method = RequestMethod.GET)
+	public @ResponseBody List<Pais> listaPaises() {
+		List<Pais> paises = new ArrayList<Pais>();
+		paises.add(new Pais("139", "Brasil"));
+		return paises;
+	}
+
+	@RequestMapping(value = "/lista_estados", method = RequestMethod.GET)
+	public @ResponseBody List<Estado> listaEstados(@RequestParam("pais") String pais) {
+		List<Estado> estados = new ArrayList<Estado>();
+
+		if (pais.equals("139")) {
+			estados.add(new Estado("397", "ACRE"));
+			estados.add(new Estado("398", "ALAGOAS"));
+			estados.add(new Estado("399", "AMAPÁ"));
+			estados.add(new Estado("400", "AMAZONAS"));
+			estados.add(new Estado("401", "BAHIA"));
+			estados.add(new Estado("402", "CEARÁ"));
+			estados.add(new Estado("403", "DISTRITO FEDERAL"));
+			estados.add(new Estado("404", "GOIÁS"));
+			estados.add(new Estado("405", "ESPIRITO SANTO"));
+			estados.add(new Estado("406", "MARANHÃO"));
+			estados.add(new Estado("408", "MATO GROSSO"));
+			estados.add(new Estado("409", "MATO GROSSO DO SUL"));
+			estados.add(new Estado("410", "MINAS GERAIS"));
+			estados.add(new Estado("411", "PARÁ"));
+			estados.add(new Estado("412", "PARAÍBA"));
+			estados.add(new Estado("413", "PARANÁ"));
+			estados.add(new Estado("414", "PERNAMBUCO"));
+			estados.add(new Estado("415", "PIAUÍ"));
+			estados.add(new Estado("416", "RIO DE JANEIRO"));
+			estados.add(new Estado("417", "RIO GRANDE DO NORTE"));
+			estados.add(new Estado("418", "RIO GRANDE DO SUL"));
+			estados.add(new Estado("419", "RONDÔNIA"));
+			estados.add(new Estado("420", "RORÂIMA"));
+			estados.add(new Estado("421", "SÃO PAULO"));
+			estados.add(new Estado("422", "SANTA CATARINA"));
+			estados.add(new Estado("423", "SERGIPE"));
+			estados.add(new Estado("424", "TOCANTINS"));
+		}
+
+		return estados;
+	}
+
+	@RequestMapping(value = "/lista_cidades", method = RequestMethod.GET)
+	public @ResponseBody List<Cidade> listaCidades(@RequestParam("estado") String estado, @RequestParam("completo") String completo,
+			RedirectAttributes redirectAttributes) {
+		List<Cidade> cidades = new ArrayList<Cidade>();
+		try {
+			if (completo.equalsIgnoreCase("N"))
+				cidades = carregaCidadePorEstadoDoBrasil(estado);
+			else {
+				BuscaCEPKingHostProxy proxy = new BuscaCEPKingHostProxy();
+				Cidade cidade = proxy.doGet(estado);
+
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("AC", "397");
+				map.put("AL", "398");
+				map.put("AP", "399");
+				map.put("AM", "400");
+				map.put("BA", "401");
+				map.put("CE", "402");
+				map.put("DF", "403");
+				map.put("GO", "404");
+				map.put("ES", "405");
+				map.put("MA", "406");
+				map.put("MG", "410");
+				map.put("MS", "409");
+				map.put("MT", "408");
+				map.put("PA", "411");
+				map.put("PB", "412");
+				map.put("PE", "414");
+				map.put("PI", "415");
+				map.put("PR", "413");
+				map.put("RJ", "416");
+				map.put("RN", "417");
+				map.put("RO", "419");
+				map.put("RR", "420");
+				map.put("RS", "418");
+				map.put("SC", "422");
+				map.put("SE", "423");
+				map.put("SP", "421");
+				map.put("TO", "424");
+
+				cidade.setUf(map.get(cidade.getUf()));
+				List<Cidade> lista = carregaCidadePorEstadoDoBrasil(cidade.getUf());
+				for (int i = 0; i < lista.size(); i++) {
+					if (lista.get(i).getNome().equalsIgnoreCase(cidade.getCidade())) {
+						cidade.setCidade(lista.get(i).getId());
+						break;
+					}
+				}
+				cidades.add(cidade);
+			}
+
+		} catch (Exception e) {
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+		}
+		return cidades;
+	}
+
+	public List<Cidade> carregaCidadePorEstadoDoBrasil(String estadoId) throws Exception {
+		return CidadeLoader.listaCidadesPorEstado(estadoId);
+	}
+
+	@RequestMapping(value = "/lista_produtos", method = RequestMethod.GET)
+	public @ResponseBody List<Produto> listaProdutos() {
+		if (this.produtos == null) {
+			AdesaoManager manager = new AdesaoManager();
+			try {
+				produtos = manager.listaProdutosDisponiveis();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return this.produtos;
+	}
+
+	@RequestMapping(value = "/novocadastro", method = GET)
+	public ModelAndView novoCadastro(HttpSession session) {
+
+		SessionUtil.setMenuAtivo(session, "novocadastro");
+		SessionUtil.setSubMenuAtivo(session, "novocadastro");
+
+		SessionUtil.setSubMenuAtivo(session, "novocadastro");
+		this.produtos = null;
+
+		if (cadastro == null) {
+			cadastro = new Cadastro();
+		}
+
+		Usuario usuario;
+		try {
+			usuario = DaoFactory.getInstance().getUsuarioDao().carregaPorId(SessionUtil.getUsuarioId(session));
+			cadastro.setPatrocinador(usuario.getLogin().toUpperCase());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		ModelAndView model = new ModelAndView("novocadastro", "cadastro", cadastro);
+		return model;
+	}
+
+	@RequestMapping(value = "/novocadastronovo", method = POST)
+	public String novoCadastroNovo(@Valid final Cadastro cadastro, BindingResult result, RedirectAttributes redirectAttributes, HttpSession session,
+			HttpServletRequest request) {
+
+		try {
+
+			try {
+				atualizaProdutos(request);
+			} catch (Exception e) {
+				throw new Exception("Serviço web para listar os produtos não esta acessivel: " + e.getMessage());
+			}
+
+			if (result.hasErrors()) {
+				return "novocadastro";
+			}
+
+			AdesaoManager manager = new AdesaoManager();
+			cadastro.setProdutos(this.produtos);
+			manager.enviaAdesao(cadastro);
+			MessageUtil.sucesso(redirectAttributes, "Parabéns!", "Novo cadastro criado com sucesso");
+
+			this.cadastro = null;
+			this.produtos = null;
+			return "redirect:novocadastro";
+		} catch (Exception e) {
+			MessageUtil.erro(redirectAttributes, "ERRO", e);
+			this.cadastro = cadastro;
+			return "redirect:novocadastro";
+		}
+	}
+
+}

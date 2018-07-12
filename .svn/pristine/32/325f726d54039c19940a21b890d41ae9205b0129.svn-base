@@ -1,0 +1,62 @@
+package br.com.adaptaconsultoria.amr.persistence.jpa;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.Query;
+
+import br.com.adaptaconsultoria.amr.model.RedeBinaria;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.persistence.dao.RedeBinariaDao;
+
+/**
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class HRedeBinariaDao extends HDao<RedeBinaria> implements RedeBinariaDao {
+
+	@Override
+	public List<RedeBinaria> listaPorID(String ids) throws Exception {
+		String query = "SELECT obj FROM RedeBinaria obj";
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		String[] id = ids.split(",");
+		for (int i = 0; i < id.length; i++) {
+			if (i == 0)
+				query += " WHERE obj.id IN (:id0)";
+			else
+				query += " OR obj.id IN (:id" + i + ")";
+
+			parametros.put("id" + i, id[i]);
+		}
+
+		return pesquisa(query, parametros);
+	}
+
+	@Override
+	public String carregaIDPorUsuario(String adUserId) throws Exception {
+		Query q = getEntityManager().createNativeQuery("SELECT amr_montarede('" + adUserId + "', '0')");
+		return (String) q.getSingleResult();
+	}
+
+	@Override
+	public String carregaNoRaiz(String adUserId) throws Exception {
+		Query q = getEntityManager().createNativeQuery("SELECT amr_usuarioraiz('" + adUserId + "')");
+		return (String) q.getSingleResult();
+	}
+
+	@Override
+	public Boolean descente(String adUserRaizId, String adUserId) throws Exception {
+		Query q = getEntityManager().createNativeQuery("SELECT amr_descendente('" + adUserRaizId + "', '" + adUserId + "')");
+		String resultado = (String) q.getSingleResult();
+		return resultado.equalsIgnoreCase("Y");
+	}
+
+	public static void main(String[] args) throws Exception {
+		System.out.println(DaoFactory.getInstance().getRedeBinariaDao().carregaNoRaiz("CDA070A8E23D4833AD778963E28B8CCF"));
+	}
+
+}

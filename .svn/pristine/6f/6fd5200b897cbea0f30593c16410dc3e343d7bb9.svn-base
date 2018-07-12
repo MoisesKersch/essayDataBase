@@ -1,0 +1,40 @@
+package br.com.adaptaconsultoria.amr.manager;
+
+import br.com.adaptaconsultoria.amr.model.Saque;
+import br.com.adaptaconsultoria.amr.model.Usuario;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.persistence.util.DataUtil;
+import br.com.adaptaconsultoria.amr.properties.AMRProperties;
+import br.com.adaptaconsultoria.amr.util.FormatUtilities;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class SaqueManager {
+
+	public void saca(String adUserId, Saque saque) throws Exception {
+
+		Usuario usuario = DaoFactory.getInstance().getUsuarioDao().carregaPorId(adUserId);
+		if (usuario == null)
+			throw new Exception("Nenhum registro de usuario com o id de sessão encontrado no banco de dados");
+
+		if (usuario.getSenhaFinanceira() == null || usuario.getSenhaFinanceira().isEmpty())
+			throw new Exception("Senha financeira não confere");
+
+		if (!usuario.getSenhaFinanceira().equals(FormatUtilities.sha1Base64(saque.getSenhaFinanceira())))
+			throw new Exception("Senha financeira não confere");
+
+		saque.setId(DataUtil.getId());
+		saque.setAdUserId(usuario.getId());
+		saque.setAdClientId(AMRProperties.getInstance().getPropriedade("adclientid"));
+		saque.setAdOrgId(AMRProperties.getInstance().getPropriedade("adorgid"));
+		saque.setcBPartnerId(usuario.getParceiroNegocios().getId());
+		DaoFactory.getInstance().getSaqueDao().salva(saque);
+	}
+
+}

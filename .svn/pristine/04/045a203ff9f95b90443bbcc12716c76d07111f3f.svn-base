@@ -1,0 +1,54 @@
+package br.com.adaptaconsultoria.amr.model;
+
+import org.dom4j.Document;
+
+import br.com.adaptaconsultoria.amr.properties.AMRProperties;
+import br.com.adaptaconsultoria.amr.util.io.Dom4jUtil;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class Compra {
+
+	private String adUserId = null;
+	private String mProductId = null;
+
+	public Compra() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public String getAdUserId() {
+		return adUserId;
+	}
+
+	public void setAdUserId(String adUserId) {
+		this.adUserId = adUserId;
+	}
+
+	public String getmProductId() {
+		return mProductId;
+	}
+
+	public void setmProductId(String mProductId) {
+		this.mProductId = mProductId;
+	}
+
+	public String toXML() throws Exception {
+		Document document = Dom4jUtil.createDocument("envCompra");
+		document.getRootElement().addAttribute("adClientId", AMRProperties.getInstance().getPropriedade("adclientid"));
+		document.getRootElement().addAttribute("adOrgId", AMRProperties.getInstance().getPropriedade("adorgid"));
+
+		document.getRootElement().add(Dom4jUtil.createElement("adUserId", this.adUserId));
+		document.getRootElement().add(Dom4jUtil.createElement("mProductId", this.mProductId));
+		document.getRootElement().add(Dom4jUtil.createElement("quantidade", "1"));
+
+		return document.asXML();
+	}
+
+}

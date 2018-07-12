@@ -1,0 +1,14 @@
+package br.com.adaptaconsultoria.amr.persistence.jpa;
+
+import br.com.adaptaconsultoria.amr.model.Pacote;
+import br.com.adaptaconsultoria.amr.persistence.dao.PacoteDao;
+
+/**
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class HPacoteDao extends HDao<Pacote> implements PacoteDao {
+}

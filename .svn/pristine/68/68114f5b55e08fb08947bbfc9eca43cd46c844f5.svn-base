@@ -1,0 +1,66 @@
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<jsp:include page="meusdadosmenu.jsp" />
+
+<br>
+<div class="table-responsive">
+
+	<jsp:include page="message.jsp" />
+	
+	<table class="table table-bordered table-striped">
+		
+		<tr>
+			<th>Documentos enviados</th>
+		</tr>
+
+		<c:forEach var="item" items="${arquivos}">
+			<tr>
+				<td>${item.name}</td>
+			</tr>
+		</c:forEach>
+			
+	</table>
+	
+	<form class="form-horizontal" method="POST" action="uploaddocumento" enctype="multipart/form-data" onsubmit="return false;" id="formUpload">
+        <div class="form-group">
+			<div class="col-sm-offset-2 col-sm-9">
+				<input type="file" name="file">
+			</div>
+		</div>
+        
+        <div class="form-group">
+			<div class="col-sm-offset-2 col-sm-9">
+				<a href="#" class="btn btn-primary" onclick="postFormUpload();">
+					Enviar documento
+				</a>
+			</div>
+		</div>
+    </form>
+	
+</div>
+
+<script>
+	function postFormUpload() {
+
+		var form = $('form')[0];
+		var formData = new FormData(form);
+		
+		$.ajax({dataType : 'json',
+      			url : "uploaddocumento",
+      			data : formData,
+      			type : "POST",
+      			enctype: 'multipart/form-data',
+      			processData: false,
+      			contentType:false,
+      			error : function(result) {
+					if (result.responseText == '') {
+						get('meusdocumentos');
+					}
+					else {
+						alert(result.responseText);
+					}
+      			}
+		});
+	}
+</script>

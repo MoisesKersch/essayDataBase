@@ -1,0 +1,140 @@
+package br.com.adaptaconsultoria.amr.manager;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import br.com.adaptaconsultoria.amr.model.RedeBinaria;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.persistence.dao.RedeBinariaDao;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class RedeBinariaManager {
+
+	public List<RedeBinaria> montaRedeBinariaHTML5(String adUserId) throws Exception {
+
+		RedeBinariaDao dao = DaoFactory.getInstance().getRedeBinariaDao();
+
+		String id = DaoFactory.getInstance().getRedeBinariaDao().carregaIDPorUsuario(adUserId);
+		List<RedeBinaria> rede = dao.listaPorID(id);
+
+		RedeBinaria box1 = null;
+		Map<String, RedeBinaria> map = new HashMap<String, RedeBinaria>();
+		for (int i = 0; i < rede.size(); i++) {
+			if (rede.get(i).getAdUserId().replaceAll("'", "").equalsIgnoreCase(adUserId))
+				box1 = rede.get(i);
+			else
+				map.put(rede.get(i).getId(), rede.get(i));
+		}
+
+		RedeBinaria box2 = null;
+		RedeBinaria box3 = null;
+		RedeBinaria box4 = null;
+		RedeBinaria box5 = null;
+		RedeBinaria box6 = null;
+		RedeBinaria box7 = null;
+		RedeBinaria box8 = null;
+		RedeBinaria box9 = null;
+		RedeBinaria box10 = null;
+		RedeBinaria box11 = null;
+		RedeBinaria box12 = null;
+		RedeBinaria box13 = null;
+		RedeBinaria box14 = null;
+		RedeBinaria box15 = null;
+
+		if (box1 != null) {
+			box2 = map.get(box1.getEsquerda());
+			box3 = map.get(box1.getDireita());
+
+			if (box2 != null) {
+				box4 = map.get(box2.getEsquerda());
+				box5 = map.get(box2.getDireita());
+
+				if (box4 != null) {
+					box8 = map.get(box4.getEsquerda());
+					box9 = map.get(box4.getDireita());
+				}
+
+				if (box5 != null) {
+					box10 = map.get(box5.getEsquerda());
+					box11 = map.get(box5.getDireita());
+				}
+			}
+
+			if (box3 != null) {
+				box6 = map.get(box3.getEsquerda());
+				box7 = map.get(box3.getDireita());
+
+				if (box6 != null) {
+					box12 = map.get(box6.getEsquerda());
+					box13 = map.get(box6.getDireita());
+				}
+
+				if (box7 != null) {
+					box14 = map.get(box7.getEsquerda());
+					box15 = map.get(box7.getDireita());
+				}
+			}
+		}
+
+		box2 = acabamentoFinal(box2);
+		box3 = acabamentoFinal(box3);
+		box4 = acabamentoFinal(box4);
+		box5 = acabamentoFinal(box5);
+		box6 = acabamentoFinal(box6);
+		box7 = acabamentoFinal(box7);
+		box8 = acabamentoFinal(box8);
+		box9 = acabamentoFinal(box9);
+		box10 = acabamentoFinal(box10);
+		box11 = acabamentoFinal(box11);
+		box12 = acabamentoFinal(box12);
+		box13 = acabamentoFinal(box13);
+		box14 = acabamentoFinal(box14);
+		box15 = acabamentoFinal(box15);
+
+		rede = new ArrayList<RedeBinaria>();
+		rede.add(box8);
+		rede.add(box4);
+		rede.add(box9);
+		rede.add(box2);
+		rede.add(box10);
+		rede.add(box5);
+		rede.add(box11);
+		rede.add(box1);
+		rede.add(box12);
+		rede.add(box6);
+		rede.add(box13);
+		rede.add(box3);
+		rede.add(box14);
+		rede.add(box7);
+		rede.add(box15);
+		return rede;
+	}
+
+	private RedeBinaria acabamentoFinal(RedeBinaria box) throws Exception {
+		if (box == null) {
+			box = new RedeBinaria();
+			box.setName("");
+			box.setAdUserId("");
+			box.setTooltip("Nenhum parceiro");
+		}
+		if (box.getAdUserId() == null)
+			box.setAdUserId("");
+		box.setAdUserId("'" + box.getAdUserId().replaceAll("'", "") + "'");
+		return box;
+	}
+
+	public static void main(String[] args) throws Exception {
+		RedeBinariaManager manager = new RedeBinariaManager();
+		manager.montaRedeBinariaHTML5("BB64D2488C6842BDB381C6F2F98D03F1");
+	}
+
+}

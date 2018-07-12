@@ -1,0 +1,20 @@
+package br.com.adaptaconsultoria.amr.persistence.dao;
+
+import java.util.List;
+
+import br.com.adaptaconsultoria.amr.model.RedeBinaria;
+
+/**
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public interface RedeBinariaDao extends Dao<RedeBinaria> {
+
+	public List<RedeBinaria> listaPorID(String id) throws Exception;
+
+	public String carregaIDPorUsuario(String adUserId) throws Exception;
+
+}

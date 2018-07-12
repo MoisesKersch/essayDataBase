@@ -1,0 +1,15 @@
+package br.com.adaptaconsultoria.amr.persistence.jpa;
+
+import br.com.adaptaconsultoria.amr.model.Saque;
+import br.com.adaptaconsultoria.amr.persistence.dao.SaqueDao;
+
+/**
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class HSaqueDao extends HDao<Saque> implements SaqueDao {
+
+}

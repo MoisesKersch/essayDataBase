@@ -1,0 +1,105 @@
+package br.com.adaptaconsultoria.amr.manager;
+
+import java.io.File;
+import java.io.Serializable;
+
+import br.com.adaptaconsultoria.amr.model.Arquivo;
+import br.com.adaptaconsultoria.amr.model.Documento;
+import br.com.adaptaconsultoria.amr.model.Usuario;
+import br.com.adaptaconsultoria.amr.model.ssh.SSH;
+import br.com.adaptaconsultoria.amr.persistence.DaoFactory;
+import br.com.adaptaconsultoria.amr.persistence.dao.ArquivoDao;
+import br.com.adaptaconsultoria.amr.persistence.util.DataUtil;
+import br.com.adaptaconsultoria.amr.properties.AMRProperties;
+import br.com.adaptaconsultoria.amr.util.io.FileUtil;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class DocumentoManager {
+
+	public Documento downloadDocumento(Serializable id) throws Exception {
+
+		Documento doc = DaoFactory.getInstance().getDocumentoDao().carregaPorId(id);
+		if (doc == null)
+			throw new Exception("Nenhum documento com o ID: " + id + " foi encontrado no banco de dados");
+
+		doc.setUrl(copiaArquivo(new File(doc.getUrl())).getAbsolutePath());
+		return doc;
+	}
+
+	private File copiaArquivo(File arquivo) throws Exception {
+		String sftpHost = AMRProperties.getInstance().getPropriedade("ssh.host");
+		int sftpPort = Integer.parseInt(AMRProperties.getInstance().getPropriedade("ssh.port"));
+		String sftpUser = AMRProperties.getInstance().getPropriedade("ssh.user");
+		String sftpPass = AMRProperties.getInstance().getPropriedade("ssh.password");
+
+		SSH ssh = new SSH();
+		ssh.setHost(sftpHost);
+		ssh.setPorta(sftpPort);
+		ssh.setUsuario(sftpUser);
+		ssh.setSenha(sftpPass);
+		return ssh.copiaArquivo(arquivo, new File(AMRProperties.getInstance().getPropriedade("diretorio.temp")));
+	}
+
+	private void enviaArquivo(File arquivo, File diretorioDestino) throws Exception {
+		String sftpHost = AMRProperties.getInstance().getPropriedade("ssh.host");
+		int sftpPort = Integer.parseInt(AMRProperties.getInstance().getPropriedade("ssh.port"));
+		String sftpUser = AMRProperties.getInstance().getPropriedade("ssh.user");
+		String sftpPass = AMRProperties.getInstance().getPropriedade("ssh.password");
+
+		SSH ssh = new SSH();
+		ssh.setHost(sftpHost);
+		ssh.setPorta(sftpPort);
+		ssh.setUsuario(sftpUser);
+		ssh.setSenha(sftpPass);
+		ssh.enviaArquivo(arquivo, diretorioDestino);
+	}
+
+	public File carregaDocumentoDoUsuario(String arquivoId) throws Exception {
+		Arquivo arquivo = DaoFactory.getInstance().getArquivoDao().carregaPorId(arquivoId);
+		if (arquivo == null)
+			return null;
+
+		File anexo = copiaArquivo(arquivo.path());
+		return anexo;
+	}
+
+	public void adicionaDocumentoParaOUsuario(String usuarioId, String absolutePath) throws Exception {
+		Usuario usuario = DaoFactory.getInstance().getUsuarioDao().carregaPorId(usuarioId);
+
+		if (usuario == null)
+			throw new Exception("Nenhum usuário com esse ID foi encontrado no sistema");
+
+		File file = new File(absolutePath);
+
+		ArquivoDao arquivoDao = DaoFactory.getInstance().getArquivoDao();
+		Arquivo arquivo = new Arquivo();
+		arquivo.setId(DataUtil.getId());
+		arquivo.setAdClientId(AMRProperties.getInstance().getPropriedade("adclientid"));
+		arquivo.setAdOrgId(AMRProperties.getInstance().getPropriedade("adorgid"));
+		arquivo.setCreatedby(usuario.getId());
+		arquivo.setUpdatedby(usuario.getId());
+		arquivo.setSeqNo(arquivoDao.getProximoNumeroDaSequencia(usuario.getParceiroNegocios().getId()));
+		arquivo.setAdRecordId(usuario.getParceiroNegocios().getId());
+		arquivo.setAdTableId("291");
+		arquivo.setcDataTypeId(arquivoDao.getDataType(FileUtil.getExtensao(file.getName())));
+		arquivo.setName(file.getName());
+
+		enviaArquivo(file, new File(arquivo.path().getParent()));
+
+		arquivoDao.salva(arquivo);
+	}
+
+	public static void main(String[] args) throws Exception {
+		DocumentoManager manager = new DocumentoManager();
+		// manager.carregaDocumentoDoUsuario("E4933A5DB7FD409999C7CC5623AE01DF");
+		manager.adicionaDocumentoParaOUsuario("3A1045DE01AE4AD18249C609D1D8984D", "/home/adapta/working/temp/ERRO-2.png");
+	}
+
+}

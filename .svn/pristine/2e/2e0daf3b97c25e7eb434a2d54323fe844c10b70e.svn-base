@@ -1,0 +1,30 @@
+package br.com.adaptaconsultoria.amr.manager;
+
+import br.com.adaptaconsultoria.amr.model.Compra;
+import br.com.adaptaconsultoria.amr.model.RetEnvCompra;
+import br.com.adaptaconsultoria.amr.proxy.CompraServiceProxy;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class CompraManager {
+
+	public void enviaCompra(String adUserId, String mProductId) throws Exception {
+		Compra compra = new Compra();
+		compra.setAdUserId(adUserId);
+		compra.setmProductId(mProductId);
+		String xml = compra.toXML();
+
+		CompraServiceProxy proxy = new CompraServiceProxy();
+		RetEnvCompra retEnvCompra = proxy.doPost(xml);
+		if (!retEnvCompra.isSucesso()) {
+			throw new Exception(retEnvCompra.getDescricao());
+		}
+	}
+
+}

@@ -1,0 +1,43 @@
+package br.com.adaptaconsultoria.amr.model;
+
+import org.dom4j.Document;
+import org.dom4j.Element;
+
+import br.com.adaptaconsultoria.amr.properties.AMRProperties;
+import br.com.adaptaconsultoria.amr.util.io.Dom4jUtil;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class Adesao {
+
+	private Cadastro parceiro;
+
+	public Adesao() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Cadastro getParceiro() {
+		return parceiro;
+	}
+
+	public void setParceiro(Cadastro parceiro) {
+		this.parceiro = parceiro;
+	}
+
+	public String toXML() throws Exception {
+		Document document = Dom4jUtil.createDocument("adesao");
+		document.getRootElement().addAttribute("adClientId", AMRProperties.getInstance().getPropriedade("adclientid"));
+		document.getRootElement().addAttribute("adOrgId", AMRProperties.getInstance().getPropriedade("adorgid"));
+		Element eParceiro = parceiro.toElement();
+		document.getRootElement().add(eParceiro);
+		return document.asXML();
+	}
+
+}

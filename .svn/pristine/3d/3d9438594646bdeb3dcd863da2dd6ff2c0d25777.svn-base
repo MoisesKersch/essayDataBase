@@ -1,0 +1,72 @@
+package br.com.adaptaconsultoria.amr.springmvc.interceptor;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import br.com.adaptaconsultoria.amr.springmvc.util.SessionUtil;
+
+/**
+ *
+ *
+ * @author Will Zaniol
+ * @author www.adaptaconsultoria.com.br
+ * @version 1.0.0
+ *
+ */
+public class AutorizadorInterceptor extends HandlerInterceptorAdapter {
+
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object controller) throws Exception {
+
+		String uri = request.getRequestURI();
+
+		String usuario = SessionUtil.getUsuarioId(request.getSession());
+		if (usuario != null && !usuario.isEmpty()) {
+			return true;
+		}
+
+		if (uri.endsWith("login") || uri.endsWith("adesao") || uri.endsWith("novaadesao") || uri.endsWith(".css") || uri.endsWith(".js")
+				|| uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".ttf") || uri.endsWith(".woff") || uri.endsWith(".pdf")) {
+			return true;
+		}
+
+		if (uri.endsWith("validapatrocinador")) {
+			return true;
+		}
+
+		if (uri.endsWith("patrocinador")) {
+			return true;
+		}
+
+		if (uri.endsWith("adesao_novo")) {
+			return true;
+		}
+
+		if (uri.endsWith("lista_paises")) {
+			return true;
+		}
+		if (uri.endsWith("lista_estados")) {
+			return true;
+		}
+		if (uri.endsWith("lista_cidades")) {
+			return true;
+		}
+		if (uri.endsWith("lista_produtos")) {
+			return true;
+		}
+
+		if (uri.endsWith("esqueciminhasenha")) {
+			return true;
+		}
+
+		response.sendRedirect("login");
+		return false;
+	}
+
+	@Override
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+	}
+
+}
